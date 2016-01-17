@@ -1,0 +1,34 @@
+{
+  "name": "react-native-billing",
+  "version": "0.0.1",
+  "description": "React Native bridge for InApp Billing on Android",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idehub/react-native-billing.git"
+  },
+  "keywords": [
+    "react",
+    "native",
+    "inapp",
+    "billing",
+    "purchase",
+    "react-native",
+    "android",
+    "bridge"
+  ],
+  "author": "Idéhub AS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/idehub/react-native-billing/issues"
+  },
+  "homepage": "https://github.com/idehub/react-native-billing#readme",
+  "rnpm": {
+    "android": {
+      "packageInstance": "this"
+    }
+  }
+}
