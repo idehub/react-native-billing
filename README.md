@@ -73,8 +73,8 @@ InAppBilling.getProductDetails(productId).then((details) => {
   console.log(details);
 });
 
-InAppBilling.purchase(productId).then((purchased) => {
-  console.log("Is purchased: " + purchased);
+InAppBilling.purchase(productId).then((purchaseDetails) => {
+  console.log(purchaseDetails);
 });
 
 InAppBilling.consumePurchase(productId).then((consumed) => {
