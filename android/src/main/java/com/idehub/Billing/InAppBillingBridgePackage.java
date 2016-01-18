@@ -32,11 +32,12 @@ public class InAppBillingBridgePackage implements ReactPackage {
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-		if (_licenseKey == null)
-        	modules.add(new InAppBillingBridge(reactContext, _activity));
-		else
-			modules.add(new InAppBillingBridge(reactContext, _licenseKey, _merchantId, _activity));
-        return modules;
+      		if (_licenseKey == null)
+              	modules.add(new InAppBillingBridge(reactContext, _activity));
+      		else
+      			    modules.add(new InAppBillingBridge(reactContext, _licenseKey, _activity));
+
+          return modules;
     }
 
     @Override

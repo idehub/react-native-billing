@@ -11,8 +11,14 @@ import React, {
   View
 } from 'react-native';
 
+const InAppBilling = require('react-native-billing');
+
 class example extends Component {
   render() {
+    InAppBilling.purchase('android.test.purchased').then((details) => {
+      console.log(details);
+    });
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>

@@ -60,13 +60,13 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
       ...
   ```
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
-```
+```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
 ```
 
 ## Javascript API
 All three methods returns `Promises`.
-```
+```javascript
 const InAppBilling = require("react-native-billing");
 
 InAppBilling.getProductDetails(productId).then((details) => {

@@ -25,8 +25,8 @@ public class BillingHandler implements BillingProcessor.IBillingHandler {
         mOnPurchaseHistoryRestoredCallback = onPurchaseHistoryRestoredCallback;
     }
 
-    public BillingProcessor setupBillingProcessor(ReactApplicationContext _reactContext, String licenseKey, String merchantId) {
-        mBillingProcessor = new BillingProcessor(_reactContext, licenseKey, merchantId, this);
+    public BillingProcessor setupBillingProcessor(ReactApplicationContext _reactContext, String licenseKey) {
+        mBillingProcessor = new BillingProcessor(_reactContext, licenseKey, null, this);
         return mBillingProcessor;
     }
 

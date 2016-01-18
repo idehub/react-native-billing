@@ -8,6 +8,8 @@ import android.os.Bundle;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.anjlab.android.iab.v3.PurchaseInfo;
+import com.anjlab.android.iab.v3.PurchaseInfo.ResponseData;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -71,9 +73,19 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
                         new BillingHandler.IProductPurchased() {
                             @Override
                             public void invoke(BillingProcessor bp, String pId, TransactionDetails details) {
-                                if (pId == productId)
+                                if (pId == productId && details != null)
                                 {
-                                    promise.resolve(true);
+                                    WritableMap map = Arguments.createMap();
+
+                                    map.putString("productId", details.productId);
+                                    map.putString("orderId", details.orderId);
+                                    map.putString("purchaseToken", details.purchaseToken);
+                                    map.putString("purchaseTime", details.purchaseTime.toString());
+
+                                    ResponseData responseData = details.purchaseInfo.parseResponseData();
+                                    map.putString("purchaseState", responseData.purchaseState.toString());
+
+                                    promise.resolve(map);
                                 }
                                 bp.release();
                             }
@@ -85,7 +97,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
                                 bp.release();
                             }
                         }, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY, MERCHANT_ID);
+                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
             } else  {
                 promise.reject("InApp billing is not available.");
             }
@@ -112,7 +124,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
                             }
                         },
                         null, null, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY, MERCHANT_ID);
+                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
             } else  {
                 promise.reject("InApp billing is not available.");
             }
@@ -149,7 +161,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
                             bp.release();
                         }
                     }, null, null, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY, MERCHANT_ID);
+                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
             } else  {
                 promise.reject("InApp billing is not available.");
             }
