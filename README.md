@@ -1,6 +1,8 @@
 InApp Billing for Android ![npm version](https://img.shields.io/npm/v/react-native-billing.svg)
 =============
-This is a simple bridge for InApp Billing (Purchase) on Android for React Native.
+This is a simple bridge for InApp Billing (Purchase) on Android for React Native, accomplished by wrapping [anjlab's inapp library](https://github.com/anjlab/android-inapp-billing-v3).
+
+**Important**:  The JavaScript API and native module is very much subject to change in the near future, and should be viewed as just a simple implementation at the moment.
 
 ## Installation with rnpm
 1. `npm install --save react-native-billing`
@@ -60,4 +62,22 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 ```
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
+```
+
+## Javascript API
+All three methods returns `Promises`.
+```
+const InAppBilling = require("react-native-billing");
+
+InAppBilling.getProductDetails(productId).then((details) => {
+  console.log(details);
+});
+
+InAppBilling.purchase(productId).then((purchased) => {
+  console.log("Is purchased: " + purchased);
+});
+
+InAppBilling.consumePurchase(productId).then((consumed) => {
+  console.log("Is consumed: " + consumed);
+});
 ```
