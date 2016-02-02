@@ -3,6 +3,14 @@
 const InAppBillingBridge = require("react-native").NativeModules.InAppBillingBridge;
 
 class InAppBilling {
+    static open() {
+      return InAppBillingBridge.open();
+    }
+
+    static close() {
+      return InAppBillingBridge.close();
+    }
+
     static getProductDetails(productId) {
       return InAppBillingBridge.getProductDetails(productId);
     }

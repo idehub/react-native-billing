@@ -15,8 +15,11 @@ const InAppBilling = require('react-native-billing');
 
 class example extends Component {
   render() {
-    InAppBilling.purchase('android.test.purchased').then((details) => {
+    InAppBilling.open().
+    then(() => InAppBilling.purchase('android.test.purchased'))
+    .then((details) => {
       console.log(details);
+      InAppBilling.close();
     });
 
     return (

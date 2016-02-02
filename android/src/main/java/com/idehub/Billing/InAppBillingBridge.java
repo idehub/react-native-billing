@@ -11,6 +11,7 @@ import com.anjlab.android.iab.v3.TransactionDetails;
 import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.anjlab.android.iab.v3.PurchaseInfo.ResponseData;
 
+import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -24,26 +25,33 @@ import java.util.Map;
 
 import com.idehub.Billing.BillingHandler;
 
-public class InAppBillingBridge extends ReactContextBaseJavaModule {
+public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
     final Activity _activity;
+    BillingProcessor bp;
+    Promise mInitializationPromise;
+    Promise mPurchasePromise;
 
     public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
         super(reactContext);
         _reactContext = reactContext;
         LICENSE_KEY = licenseKey;
         _activity = activity;
+
+        reactContext.addActivityEventListener(this);
     }
 
     public InAppBillingBridge(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
         _reactContext = reactContext;
-        int keyResourceId =
-                _reactContext.getResources()
-                        .getIdentifier("RNB_GOOGLE_PLAY_LICENSE_KEY", "string", _reactContext.getPackageName());
+        int keyResourceId = _reactContext
+                .getResources()
+                .getIdentifier("RNB_GOOGLE_PLAY_LICENSE_KEY", "string", _reactContext.getPackageName());
         LICENSE_KEY = _reactContext.getString(keyResourceId);
         _activity = activity;
+
+        reactContext.addActivityEventListener(this);
     }
 
     @Override
@@ -57,123 +65,130 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
         return constants;
     }
 
-    @ReactMethod
-    public void purchase(final String productId, final Promise promise){
-        try {
-            if (isIabServiceAvailable()) {
-                BillingHandler handler = new BillingHandler(
-                        new BillingHandler.IBillingInitialized() {
-                            @Override
-                            public void invoke(BillingProcessor bp) {
-                                boolean purchaseProcessStarted = bp.purchase(_activity, productId);
-                                if (!purchaseProcessStarted)
-                                    promise.reject("Could not start purchase process.");
-                            }
-                        },
-                        new BillingHandler.IProductPurchased() {
-                            @Override
-                            public void invoke(BillingProcessor bp, String pId, TransactionDetails details) {
-                                if (pId == productId && details != null)
-                                {
-                                    WritableMap map = Arguments.createMap();
-
-                                    map.putString("receiptData", details.purchaseInfo.responseData.toString());
-                                    map.putString("receiptSignature", details.purchaseInfo.signature.toString());
-
-                                    map.putString("productId", details.productId);
-                                    map.putString("orderId", details.orderId);
-                                    map.putString("purchaseToken", details.purchaseToken);
-                                    map.putString("purchaseTime", details.purchaseTime.toString());
-
-                                    ResponseData responseData = details.purchaseInfo.parseResponseData();
-                                    map.putString("purchaseState", responseData.purchaseState.toString());
-
-                                    promise.resolve(map);
-                                }
-                                bp.release();
-                            }
-                        },
-                        new BillingHandler.IBillingError() {
-                            @Override
-                            public void invoke(BillingProcessor bp, int errorCode, Throwable error) {
-                                promise.reject("Purchase failed with error " + errorCode);
-                                bp.release();
-                            }
-                        }, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
-            } else  {
-                promise.reject("InApp billing is not available.");
-            }
-        } catch (Exception e) {
-            promise.reject("Unknown error.");
+    @Override
+    public void onBillingInitialized() {
+        if (mInitializationPromise != null) {
+            mInitializationPromise.resolve(true);
+            mInitializationPromise = null;
         }
     }
 
     @ReactMethod
-    public void consumePurchase(final String productId, final Promise promise){
-        try {
-            if (isIabServiceAvailable()) {
-                BillingHandler handler = new BillingHandler(
-                        new BillingHandler.IBillingInitialized() {
-                            @Override
-                            public void invoke(BillingProcessor bp) {
-                                boolean consumed = bp.consumePurchase(productId);
-                                if (consumed)
-                                  promise.resolve(true);
-                                else
-                                  promise.reject("Could not consume purchase");
+    public void open(final Promise promise){
+        if (isIabServiceAvailable()) {
+            mInitializationPromise = promise;
+            bp = new BillingProcessor(_reactContext, LICENSE_KEY, this);
+        } else {
+            promise.reject("InApp billing is not available.");
+        }
+    }
 
-                                bp.release();
-                            }
-                        },
-                        null, null, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
-            } else  {
-                promise.reject("InApp billing is not available.");
+    @ReactMethod
+    public void close(final Promise promise){
+        if (bp != null) {
+            bp.release();
+            bp = null;
+        }
+
+        promise.resolve(true);
+    }
+
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+        if (mPurchasePromise != null) {
+            if (productId == productId && details != null)
+            {
+                WritableMap map = Arguments.createMap();
+
+                map.putString("receiptData", details.purchaseInfo.responseData.toString());
+                map.putString("receiptSignature", details.purchaseInfo.signature.toString());
+
+                map.putString("productId", details.productId);
+                map.putString("orderId", details.orderId);
+                map.putString("purchaseToken", details.purchaseToken);
+                map.putString("purchaseTime", details.purchaseTime.toString());
+
+                ResponseData responseData = details.purchaseInfo.parseResponseData();
+                map.putString("purchaseState", responseData.purchaseState.toString());
+
+                mPurchasePromise.resolve(map);
             }
-        } catch (Exception e) {
-            promise.reject("Unknown error.");
+            bp.release();
+        }
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+        if (mPurchasePromise != null) {
+            mPurchasePromise.reject("Purchase failed with error " + errorCode);
+        }
+    }
+
+    @ReactMethod
+    public void purchase(final String productId, final Promise promise){
+        mPurchasePromise = promise;
+        if (bp != null) {
+            boolean purchaseProcessStarted = bp.purchase(_activity, productId);
+            if (!purchaseProcessStarted)
+                promise.reject("Could not start purchase process.");
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void consumePurchase(final String productId, final Promise promise) {
+        if (bp != null) {
+            boolean consumed = bp.consumePurchase(productId);
+            if (consumed)
+                promise.resolve(true);
+            else
+                promise.reject("Could not consume purchase");
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
     @ReactMethod
     public void getProductDetails(final String productId, final Promise promise) {
-        try {
-            if (isIabServiceAvailable()) {
-                BillingHandler handler = new BillingHandler(
-                    new BillingHandler.IBillingInitialized() {
-                        @Override
-                        public void invoke(BillingProcessor bp) {
-                            SkuDetails details = bp.getPurchaseListingDetails(productId);
-                            if (details != null) {
-                                WritableMap map = Arguments.createMap();
+        if (bp != null) {
+            SkuDetails details = bp.getPurchaseListingDetails(productId);
+            if (details != null) {
+                WritableMap map = Arguments.createMap();
 
-                                map.putString("productId", details.productId);
-                                map.putString("title", details.title);
-                                map.putString("description", details.description);
-                                map.putBoolean("isSubscription", details.isSubscription);
-                                map.putString("currency", details.currency);
-                                map.putDouble("priceValue", details.priceValue);
-                                map.putString("priceText", details.priceText);
+                map.putString("productId", details.productId);
+                map.putString("title", details.title);
+                map.putString("description", details.description);
+                map.putBoolean("isSubscription", details.isSubscription);
+                map.putString("currency", details.currency);
+                map.putDouble("priceValue", details.priceValue);
+                map.putString("priceText", details.priceText);
 
-                                promise.resolve(map);
-                            }
-                            else {
-                                promise.reject("Details was not found.");
-                            }
-                            bp.release();
-                        }
-                    }, null, null, null);
-                handler.setupBillingProcessor(_reactContext, LICENSE_KEY);
-            } else  {
-                promise.reject("InApp billing is not available.");
+                promise.resolve(map);
             }
-        } catch (Exception e) {
-            promise.reject("Unknown error.");
+            else {
+                promise.reject("Details was not found.");
+            }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
         }
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+        /*
+         * Called when purchase history was restored and the list of all owned PRODUCT ID's
+         * was loaded from Google Play
+         */
     }
 
     private Boolean isIabServiceAvailable() {
         return BillingProcessor.isIabServiceAvailable(_reactContext);
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+        if (bp != null)
+            bp.handleActivityResult(requestCode, resultCode, intent);
     }
 }
