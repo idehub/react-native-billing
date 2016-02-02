@@ -29,7 +29,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
     String LICENSE_KEY = null;
     final Activity _activity;
 
-	public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
+    public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
         super(reactContext);
         _reactContext = reactContext;
         LICENSE_KEY = licenseKey;
@@ -76,6 +76,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule {
                                 if (pId == productId && details != null)
                                 {
                                     WritableMap map = Arguments.createMap();
+
+                                    map.putString("receiptData", details.purchaseInfo.responseData.toString());
+                                    map.putString("receiptSignature", details.purchaseInfo.signature.toString());
 
                                     map.putString("productId", details.productId);
                                     map.putString("orderId", details.orderId);
