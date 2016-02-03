@@ -12,7 +12,21 @@ class InAppBilling {
     }
 
     static getProductDetails(productId) {
-      return InAppBillingBridge.getProductDetails(productId);
+      return InAppBillingBridge.getProductDetails([productId])
+        .then((arr) => {
+          if (array.length > 0) {
+            return Promise.resolve(arr[0]);
+          } else {
+            return Promise.reject("Could not find details.");
+          }
+        })
+        .catch((error) => {
+          return Promise.reject(error);
+        });
+    }
+
+    static getProductDetailsArray(productIds) {
+      return InAppBillingBridge.getProductDetails(productIds);
     }
 
     static purchase(productId) {

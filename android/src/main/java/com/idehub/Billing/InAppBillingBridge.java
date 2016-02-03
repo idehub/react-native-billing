@@ -17,19 +17,23 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.idehub.Billing.PromiseConstants;
 
 public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
     final Activity _activity;
     BillingProcessor bp;
-    Promise mInitializationPromise;
-    Promise mPurchasePromise;
 
     public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
         super(reactContext);
@@ -65,17 +69,21 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onBillingInitialized() {
-        if (mInitializationPromise != null) {
-            mInitializationPromise.resolve(true);
-            mInitializationPromise = null;
-        }
+        resolvePromise(PromiseConstants.OPEN, true);
     }
 
     @ReactMethod
     public void open(final Promise promise){
         if (isIabServiceAvailable()) {
-            mInitializationPromise = promise;
-            bp = new BillingProcessor(_reactContext, LICENSE_KEY, this);
+            if (putPromise(PromiseConstants.OPEN, promise)) {
+                try {
+                    bp = new BillingProcessor(_reactContext, LICENSE_KEY, this);
+                } catch (Exception ex) {
+                    rejectPromise(PromiseConstants.OPEN, "Failure on open: " + ex.getMessage());
+                }
+            } else {
+                promise.reject("Previous open operation is not resolved.");
+            }
         } else {
             promise.reject("InApp billing is not available.");
         }
@@ -93,9 +101,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (mPurchasePromise != null) {
-            if (productId == productId && details != null)
-            {
+        if (productId == productId && details != null)
+        {
+            try {
                 WritableMap map = Arguments.createMap();
 
                 map.putString("receiptData", details.purchaseInfo.responseData.toString());
@@ -109,28 +117,30 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 ResponseData responseData = details.purchaseInfo.parseResponseData();
                 map.putString("purchaseState", responseData.purchaseState.toString());
 
-                mPurchasePromise.resolve(map);
+                resolvePromise(PromiseConstants.PURCHASE, map);
+            } catch (Exception ex) {
+                rejectPromise(PromiseConstants.PURCHASE, "Failure on purchase-callback: " + ex.getMessage());
             }
-            
-            mPurchasePromise = null;
+        } else {
+            rejectPromise(PromiseConstants.PURCHASE, "");
         }
     }
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        if (mPurchasePromise != null) {
-            mPurchasePromise.reject("Purchase failed with error " + errorCode);
-            mPurchasePromise = null;
-        }
+        rejectPromise(PromiseConstants.PURCHASE, "Purchase failed with error " + errorCode);
     }
 
     @ReactMethod
     public void purchase(final String productId, final Promise promise){
-        mPurchasePromise = promise;
         if (bp != null) {
-            boolean purchaseProcessStarted = bp.purchase(_activity, productId);
-            if (!purchaseProcessStarted)
-                promise.reject("Could not start purchase process.");
+            if (putPromise(PromiseConstants.PURCHASE, promise)) {
+                boolean purchaseProcessStarted = bp.purchase(_activity, productId);
+                if (!purchaseProcessStarted)
+                    rejectPromise(PromiseConstants.PURCHASE + productId, "Could not start purchase process.");
+            } else {
+                promise.reject("Previous purchase operation is not resolved.");
+            }
         } else {
             promise.reject("Channel is not opened. Call open() on InAppBilling.");
         }
@@ -139,35 +149,54 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void consumePurchase(final String productId, final Promise promise) {
         if (bp != null) {
-            boolean consumed = bp.consumePurchase(productId);
-            if (consumed)
-                promise.resolve(true);
-            else
-                promise.reject("Could not consume purchase");
+            try {
+                boolean consumed = bp.consumePurchase(productId);
+                if (consumed)
+                    promise.resolve(true);
+                else
+                    promise.reject("Could not consume purchase");
+            } catch (Exception ex) {
+                promise.reject("Failure on purchase-callback: " + ex.getMessage());
+            }
         } else {
             promise.reject("Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
     @ReactMethod
-    public void getProductDetails(final String productId, final Promise promise) {
+    public void getProductDetails(final ReadableArray productIds, final Promise promise) {
         if (bp != null) {
-            SkuDetails details = bp.getPurchaseListingDetails(productId);
-            if (details != null) {
-                WritableMap map = Arguments.createMap();
+            try {
+                ArrayList<String> productIdList = new ArrayList<>();
+                for (int i = 0; i < productIds.size(); i++) {
+                    productIdList.add(productIds.getString(i));
+                }
 
-                map.putString("productId", details.productId);
-                map.putString("title", details.title);
-                map.putString("description", details.description);
-                map.putBoolean("isSubscription", details.isSubscription);
-                map.putString("currency", details.currency);
-                map.putDouble("priceValue", details.priceValue);
-                map.putString("priceText", details.priceText);
+                List<SkuDetails> details = bp.getPurchaseListingDetails(productIdList);
 
-                promise.resolve(map);
-            }
-            else {
-                promise.reject("Details was not found.");
+                if (details != null) {
+                    WritableArray arr = Arguments.createArray();
+                    for (SkuDetails detail : details) {
+                        if (detail != null) {
+                            WritableMap map = Arguments.createMap();
+
+                            map.putString("productId", detail.productId);
+                            map.putString("title", detail.title);
+                            map.putString("description", detail.description);
+                            map.putBoolean("isSubscription", detail.isSubscription);
+                            map.putString("currency", detail.currency);
+                            map.putDouble("priceValue", detail.priceValue);
+                            map.putString("priceText", detail.priceText);
+                            arr.pushMap(map);
+                        }
+                    }
+
+                    promise.resolve(arr);
+                } else {
+                    promise.reject("Details was not found.");
+                }
+            } catch (Exception ex) {
+                promise.reject("Failure on getting product details: " + ex.getMessage());
             }
         } else {
             promise.reject("Channel is not opened. Call open() on InAppBilling.");
@@ -190,5 +219,31 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
         if (bp != null)
             bp.handleActivityResult(requestCode, resultCode, intent);
+    }
+
+    HashMap<String, Promise> mPromiseCache = new HashMap<>();
+
+    synchronized void resolvePromise(String key, Object value) {
+        if (mPromiseCache.containsKey(key)) {
+            Promise promise = mPromiseCache.get(key);
+            promise.resolve(value);
+            mPromiseCache.remove(key);
+        }
+    }
+
+    synchronized void rejectPromise(String key, String reason) {
+        if (mPromiseCache.containsKey(key)) {
+            Promise promise = mPromiseCache.get(key);
+            promise.reject(reason);
+            mPromiseCache.remove(key);
+        }
+    }
+
+    synchronized Boolean putPromise(String key, Promise promise) {
+        if (!mPromiseCache.containsKey(key)) {
+            mPromiseCache.put(key, promise);
+            return true;
+        }
+        return false;
     }
 }

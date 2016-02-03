@@ -14,24 +14,32 @@ import React, {
 const InAppBilling = require('react-native-billing');
 
 class example extends Component {
+  constructor() {
+    this.state = {
+      detailsText: "Purchasing test product";
+    }
+  }
   render() {
     InAppBilling.open().
     then(() => InAppBilling.purchase('android.test.purchased'))
     .then((details) => {
       console.log(details);
-      InAppBilling.close();
-    });
+      this.setState({
+        detailsText: details.productId
+      })
+      return InAppBilling.close();
+    })
+    .catch(error) => {
+      console.log(error);
+    };
 
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to React Native!
+          InApp Billing sample:
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
+          {this.state.detailsText}
         </Text>
       </View>
     );
