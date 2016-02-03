@@ -111,7 +111,8 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
                 mPurchasePromise.resolve(map);
             }
-            bp.release();
+            
+            mPurchasePromise = null;
         }
     }
 
@@ -119,6 +120,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void onBillingError(int errorCode, Throwable error) {
         if (mPurchasePromise != null) {
             mPurchasePromise.reject("Purchase failed with error " + errorCode);
+            mPurchasePromise = null;
         }
     }
 
