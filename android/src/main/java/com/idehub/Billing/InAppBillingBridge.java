@@ -107,7 +107,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 WritableMap map = Arguments.createMap();
 
                 map.putString("receiptData", details.purchaseInfo.responseData.toString());
-                map.putString("receiptSignature", details.purchaseInfo.signature.toString());
+
+                if (details.purchaseInfo.signature != null)
+                    map.putString("receiptSignature", details.purchaseInfo.signature.toString());
 
                 map.putString("productId", details.productId);
                 map.putString("orderId", details.orderId);

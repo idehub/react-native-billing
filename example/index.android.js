@@ -14,9 +14,10 @@ import React, {
 const InAppBilling = require('react-native-billing');
 
 class example extends Component {
-  constructor() {
+  constructor(props) {
+    super(props);
     this.state = {
-      detailsText: "Purchasing test product";
+      detailsText: "Purchasing test product"
     }
   }
   render() {
@@ -28,10 +29,9 @@ class example extends Component {
         detailsText: details.productId
       })
       return InAppBilling.close();
-    })
-    .catch(error) => {
+    }).catch((error) => {
       console.log(error);
-    };
+    });
 
     return (
       <View style={styles.container}>
