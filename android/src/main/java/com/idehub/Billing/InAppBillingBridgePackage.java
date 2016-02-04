@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.idehub.Billing.InAppBillingBridge;
-
 public class InAppBillingBridgePackage implements ReactPackage {
 
     public InAppBillingBridgePackage(String licenseKey, Activity activity) {

@@ -234,6 +234,46 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         }
     }
 
+    @ReactMethod
+    public void getSubscriptionDetails(final ReadableArray productIds, final Promise promise) {
+        if (bp != null) {
+            try {
+                ArrayList<String> productIdList = new ArrayList<>();
+                for (int i = 0; i < productIds.size(); i++) {
+                    productIdList.add(productIds.getString(i));
+                }
+
+                List<SkuDetails> details = bp.getSubscriptionListingDetails(productIdList);
+
+                if (details != null) {
+                    WritableArray arr = Arguments.createArray();
+                    for (SkuDetails detail : details) {
+                        if (detail != null) {
+                            WritableMap map = Arguments.createMap();
+
+                            map.putString("productId", detail.productId);
+                            map.putString("title", detail.title);
+                            map.putString("description", detail.description);
+                            map.putBoolean("isSubscription", detail.isSubscription);
+                            map.putString("currency", detail.currency);
+                            map.putDouble("priceValue", detail.priceValue);
+                            map.putString("priceText", detail.priceText);
+                            arr.pushMap(map);
+                        }
+                    }
+
+                    promise.resolve(arr);
+                } else {
+                    promise.reject("Details was not found.");
+                }
+            } catch (Exception ex) {
+                promise.reject("Failure on getting product details: " + ex.getMessage());
+            }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
     @Override
     public void onPurchaseHistoryRestored() {
         /*
