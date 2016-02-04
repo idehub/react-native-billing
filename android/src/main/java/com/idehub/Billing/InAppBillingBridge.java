@@ -130,18 +130,22 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        rejectPromise(PromiseConstants.PURCHASE, "Purchase failed with error " + errorCode);
+        if (hasPromise(PromiseConstants.PURCHASE))
+            rejectPromise(PromiseConstants.PURCHASE, "Purchase failed with error: " + errorCode);
+
+        if (hasPromise(PromiseConstants.SUBSCRIBE))
+            rejectPromise(PromiseConstants.SUBSCRIBE, "Subscribe failed with error: " + errorCode);
     }
 
     @ReactMethod
     public void purchase(final String productId, final Promise promise){
         if (bp != null) {
-            if (putPromise(PromiseConstants.PURCHASE, promise)) {
+            if (putPromise(PromiseConstants.PURCHASE, promise) && !hasPromise(PromiseConstants.SUBSCRIBE)) {
                 boolean purchaseProcessStarted = bp.purchase(_activity, productId);
                 if (!purchaseProcessStarted)
-                    rejectPromise(PromiseConstants.PURCHASE + productId, "Could not start purchase process.");
+                    rejectPromise(PromiseConstants.PURCHASE, "Could not start purchase process.");
             } else {
-                promise.reject("Previous purchase operation is not resolved.");
+                promise.reject("Previous purchase or subscribe operation is not resolved.");
             }
         } else {
             promise.reject("Channel is not opened. Call open() on InAppBilling.");
@@ -158,8 +162,33 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 else
                     promise.reject("Could not consume purchase");
             } catch (Exception ex) {
-                promise.reject("Failure on purchase-callback: " + ex.getMessage());
+                promise.reject("Failure on consume: " + ex.getMessage());
             }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void subscribe(final String productId, final Promise promise){
+        if (bp != null) {
+            if (putPromise(PromiseConstants.SUBSCRIBE, promise) && !hasPromise(PromiseConstants.PURCHASE)) {
+                boolean subscribeProcessStarted = bp.subscribe(_activity, productId);
+                if (!subscribeProcessStarted)
+                    rejectPromise(PromiseConstants.SUBSCRIBE, "Could not start subscribe process.");
+            } else {
+                promise.reject("Previous subscribe or purchase operation is not resolved.");
+            }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void isSubscribed(final String productId, final Promise promise){
+        if (bp != null) {
+            boolean subscribed = bp.isSubscribed(productId);
+            promise.resolve(subscribed);
         } else {
             promise.reject("Channel is not opened. Call open() on InAppBilling.");
         }
@@ -247,6 +276,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             return true;
         }
         return false;
+    }
+
+    synchronized Boolean hasPromise(String key) {
+        return mPromiseCache.containsKey(key);
     }
 
     synchronized void clearPromises() {
