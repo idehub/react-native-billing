@@ -1,14 +1,11 @@
 package com.idehub.Billing;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.anjlab.android.iab.v3.PurchaseInfo.ResponseData;
 
 import com.facebook.react.bridge.ActivityEventListener;
@@ -18,7 +15,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
@@ -26,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.idehub.Billing.PromiseConstants;
 
 public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
     ReactApplicationContext _reactContext;
@@ -75,17 +69,22 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void open(final Promise promise){
         if (isIabServiceAvailable()) {
-            if (putPromise(PromiseConstants.OPEN, promise)) {
-                try {
-                    bp = new BillingProcessor(_reactContext, LICENSE_KEY, this);
-                } catch (Exception ex) {
-                    rejectPromise(PromiseConstants.OPEN, "Failure on open: " + ex.getMessage());
+            if (bp == null) {
+                clearPromises();
+                if (putPromise(PromiseConstants.OPEN, promise)) {
+                    try {
+                        bp = new BillingProcessor(_reactContext, LICENSE_KEY, this);
+                    } catch (Exception ex) {
+                        rejectPromise(PromiseConstants.OPEN, "Failure on open: " + ex.getMessage());
+                    }
+                } else {
+                    promise.reject("Previous open operation is not resolved.");
                 }
             } else {
-                promise.reject("Previous open operation is not resolved.");
+                promise.reject("Channel is already open. Call close() on InAppBilling to be able to open().");
             }
         } else {
-            promise.reject("InApp billing is not available.");
+            promise.reject("InAppBilling is not available. InAppBilling will not work/test on an emulator, only a physical Android device.");
         }
     }
 
@@ -96,6 +95,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             bp = null;
         }
 
+        clearPromises();
         promise.resolve(true);
     }
 
@@ -247,5 +247,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             return true;
         }
         return false;
+    }
+
+    synchronized void clearPromises() {
+        mPromiseCache.clear();
     }
 }

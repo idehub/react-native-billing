@@ -20,7 +20,8 @@ class example extends Component {
       detailsText: "Purchasing test product"
     }
   }
-  render() {
+
+  componentDidMount() {
     InAppBilling.open().
     then(() => InAppBilling.purchase('android.test.purchased'))
     .then((details) => {
@@ -28,11 +29,14 @@ class example extends Component {
       this.setState({
         detailsText: details.productId
       })
-      return InAppBilling.close();
-    }).catch((error) => {
+      return InAppBilling.getProductDetails('android.test.purchased');
+    })
+    .then(InAppBilling.close).catch((error) => {
       console.log(error);
     });
+  }
 
+  render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
