@@ -119,31 +119,28 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 ResponseData responseData = details.purchaseInfo.parseResponseData();
                 map.putString("purchaseState", responseData.purchaseState.toString());
 
-                resolvePromise(PromiseConstants.PURCHASE, map);
+                resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, map);
             } catch (Exception ex) {
-                rejectPromise(PromiseConstants.PURCHASE, "Failure on purchase-callback: " + ex.getMessage());
+                rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Failure on purchase or subscribe callback: " + ex.getMessage());
             }
         } else {
-            rejectPromise(PromiseConstants.PURCHASE, "");
+            rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Failure on purchase or subscribe callback. Details were empty.");
         }
     }
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        if (hasPromise(PromiseConstants.PURCHASE))
-            rejectPromise(PromiseConstants.PURCHASE, "Purchase failed with error: " + errorCode);
-
-        if (hasPromise(PromiseConstants.SUBSCRIBE))
-            rejectPromise(PromiseConstants.SUBSCRIBE, "Subscribe failed with error: " + errorCode);
+        if (hasPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE))
+            rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Purchase or subscribe failed with error: " + errorCode);
     }
 
     @ReactMethod
     public void purchase(final String productId, final Promise promise){
         if (bp != null) {
-            if (putPromise(PromiseConstants.PURCHASE, promise) && !hasPromise(PromiseConstants.SUBSCRIBE)) {
+            if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
                 boolean purchaseProcessStarted = bp.purchase(_activity, productId);
                 if (!purchaseProcessStarted)
-                    rejectPromise(PromiseConstants.PURCHASE, "Could not start purchase process.");
+                    rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start purchase process.");
             } else {
                 promise.reject("Previous purchase or subscribe operation is not resolved.");
             }
@@ -172,10 +169,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void subscribe(final String productId, final Promise promise){
         if (bp != null) {
-            if (putPromise(PromiseConstants.SUBSCRIBE, promise) && !hasPromise(PromiseConstants.PURCHASE)) {
+            if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
                 boolean subscribeProcessStarted = bp.subscribe(_activity, productId);
                 if (!subscribeProcessStarted)
-                    rejectPromise(PromiseConstants.SUBSCRIBE, "Could not start subscribe process.");
+                    rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start subscribe process.");
             } else {
                 promise.reject("Previous subscribe or purchase operation is not resolved.");
             }

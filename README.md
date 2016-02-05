@@ -1,8 +1,20 @@
 InApp Billing for Android ![npm version](https://img.shields.io/npm/v/react-native-billing.svg)
 =============
-This is a simple bridge for InApp Billing (Purchase) on Android for React Native, accomplished by wrapping [anjlab's inapp library](https://github.com/anjlab/android-inapp-billing-v3).
+**React Native Billing** is built to provide an easy interface to InApp Billing on **Android**, accomplished by wrapping [anjlab's InApp Billing library](https://github.com/anjlab/android-inapp-billing-v3).
 
-**Important**:  The JavaScript API and native module is very much subject to change in the near future, and should be viewed as just a simple implementation at the moment.
+```javascript
+const InAppBilling = require("react-native-billing");
+
+InAppBilling.open()
+.then(() => InAppBilling.purchase('android.test.purchased'))
+.then((details) => {
+  console.log("You purchased: ", details)
+  return InAppBilling.close()
+})
+.catch((err) => {
+  console.log(err);
+});
+```
 
 ## Installation with rnpm
 1. `npm install --save react-native-billing`
@@ -63,21 +75,150 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
 ```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
 ```
+Alternatively, you can add your license key as a parameter when registering the `InAppBillingBridgePackage`, like so:
+```java
+.addPackage(new InAppBillingBridgePackage("YOUR_LICENSE_KEY", this))
+```
 
 ## Javascript API
-All three methods returns `Promises`.
+All  methods returns a `Promise`.
+
+### open()
+
+**Important:** Must be called to open the service channel to Google Play. Must be called (once!) before any other billing methods can be called.
+
 ```javascript
-const InAppBilling = require("react-native-billing");
+InAppBilling.open()
+.then(() => InAppBilling.purchase('android.test.purchased'));
+```
 
-InAppBilling.getProductDetails(productId).then((details) => {
-  console.log(details);
+### close()
+**Important:** Must be called to close the service channel to Google Play, when you are done doing billing related work. Failure to close the service channel may degrade the performance of your app.
+```javascript
+InAppBilling.open()
+.then(() => InAppBilling.purchase('android.test.purchased'))
+.then((details) => {
+  console.log("You purchased: ", details)
+  return InAppBilling.close()
 });
+```
 
-InAppBilling.purchase(productId).then((purchaseDetails) => {
-  console.log(purchaseDetails);
-});
+### purchase(productId)
+##### Parameter(s)
+* **productId (required):** String
 
-InAppBilling.consumePurchase(productId).then((consumed) => {
-  console.log("Is consumed: " + consumed);
+##### Returns:
+* **transactionDetails:** Object:
+  * **productId:** String
+  * **orderId:** String
+  * **purchaseToken:** String
+  * **purchaseTime:** String
+  * **purchaseState:** String
+  * **receiptSignature:** String
+  * **receiptData:** String
+
+```javascript
+InAppBilling.purchase('android.test.purchased')
+.then((details) => {
+  console.log(details)
 });
+```
+
+### consumePurchase(productId)
+##### Parameter(s)
+* **productId (required):** String
+##### Returns:
+* **consumed:** Boolean (If consumed or not)
+
+```javascript
+InAppBilling.consumePurchase('android.test.purchased').then(...);
+```
+
+### subscribe(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **transactionDetails:** Object:
+  * **productId:** String
+  * **orderId:** String
+  * **purchaseToken:** String
+  * **purchaseTime:** String
+  * **purchaseState:** String
+  * **receiptSignature:** String
+  * **receiptData:** String
+
+```javascript
+InAppBilling.subscribe('android.test.purchased')
+.then((details) => {
+  console.log(details)
+});
+```
+
+### isSubscribed(productId)
+##### Parameter(s)
+* **productId (required):** String
+##### Returns:
+* **subscribed:** Boolean
+
+```javascript
+InAppBilling.isSubscribed('android.test.purchased').then(...);
+```
+
+### getProductDetails(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **productDetails:** Object:
+  * **productId:** String
+  * **title:** String
+  * **description:** String
+  * **isSubscription:** Boolean
+  * **currency:** String
+  * **priceValue:**  Double
+  * **priceText:** String
+
+```javascript
+InAppBilling.getProductDetails('android.test.purchased').then(...);
+```
+
+### getProductDetailsArray(productIds)
+##### Parameter(s)
+* **productIds (required):** String-array
+
+##### Returns:
+* **productDetailsArray:** Array of the productDetails (same as above)
+
+```javascript
+InAppBilling.getProductDetailsArray(['android.test.purchased', 'android.test.purchased2']).then(...);
+```
+
+### getSubscriptionDetails(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **productDetails:** Object:
+  * **productId:** String
+  * **title:** String
+  * **description:** String
+  * **isSubscription:** Boolean
+  * **currency:** String
+  * **priceValue:**  Double
+  * **priceText:** String
+
+```javascript
+InAppBilling.getSubscriptionDetails('android.test.subscription').then(...);
+```
+
+### getSubscriptionDetailsArray(productIds)
+##### Parameter(s)
+* **productIds (required):** String-Array
+
+##### Returns:
+* **productDetailsArray:** Array of the productDetails (same as above)
+
+```javascript
+InAppBilling.getSubscriptionDetailsArray(['android.test.subscription', 'android.test.subscription2']).then(...);
 ```

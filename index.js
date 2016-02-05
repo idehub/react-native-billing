@@ -11,6 +11,22 @@ class InAppBilling {
       return InAppBillingBridge.close();
     }
 
+    static purchase(productId) {
+      return InAppBillingBridge.purchase(productId);
+    }
+
+    static consumePurchase(productId) {
+      return InAppBillingBridge.consumePurchase(productId);
+    }
+
+    static subscribe(productId) {
+      return InAppBillingBridge.subscribe(productId);
+    }
+
+    static isSubscribed(productId) {
+      return InAppBillingBridge.isSubscribed(productId);
+    }
+
     static getProductDetails(productId) {
       return InAppBillingBridge.getProductDetails([productId])
         .then((arr) => {
@@ -45,22 +61,6 @@ class InAppBilling {
 
     static getSubscriptionDetailsArray(productIds) {
       return InAppBillingBridge.getSubscriptionDetails(productIds);
-    }
-
-    static isSubscribed(productId) {
-      return InAppBillingBridge.isSubscribed(productId);
-    }
-
-    static purchase(productId) {
-      return InAppBillingBridge.purchase(productId);
-    }
-
-    static subscribe(productId) {
-      return InAppBillingBridge.subscribe(productId);
-    }
-
-    static consumePurchase(productId) {
-      return InAppBillingBridge.consumePurchase(productId);
     }
 }
 
