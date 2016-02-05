@@ -127,6 +127,7 @@ InAppBilling.purchase('android.test.purchased')
 ### consumePurchase(productId)
 ##### Parameter(s)
 * **productId (required):** String
+
 ##### Returns:
 * **consumed:** Boolean (If consumed or not)
 
@@ -158,6 +159,7 @@ InAppBilling.subscribe('android.test.purchased')
 ### isSubscribed(productId)
 ##### Parameter(s)
 * **productId (required):** String
+
 ##### Returns:
 * **subscribed:** Boolean
 
