@@ -17,7 +17,9 @@ class example extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      detailsText: "Purchasing test product"
+      purchaseText: "Purchasing test product",
+      productDetailsText: "Getting product details",
+      error: "None"
     }
   }
 
@@ -25,14 +27,21 @@ class example extends Component {
     InAppBilling.open().
     then(() => InAppBilling.purchase('android.test.purchased'))
     .then((details) => {
-      console.log(details);
       this.setState({
-        detailsText: details.productId
-      })
+        purchaseText: details.productId
+      });
       return InAppBilling.getProductDetails('android.test.purchased');
     })
-    .then(InAppBilling.close).catch((error) => {
-      console.log(error);
+    .then((productDetails) => {
+      this.setState({
+        productDetailsText: productDetails.title
+      });
+      return InAppBilling.close();
+    })
+    .catch((error) => {
+      this.setState({
+        error: error
+      });
     });
   }
 
@@ -43,7 +52,13 @@ class example extends Component {
           InApp Billing sample:
         </Text>
         <Text style={styles.instructions}>
-          {this.state.detailsText}
+          Purchase: {this.state.purchaseText}
+        </Text>
+        <Text style={styles.instructions}>
+          Product details: {this.state.productDetailsText}
+        </Text>
+        <Text style={styles.instructions}>
+          Error: {this.state.error}
         </Text>
       </View>
     );

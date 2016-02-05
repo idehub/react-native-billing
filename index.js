@@ -30,7 +30,7 @@ class InAppBilling {
     static getProductDetails(productId) {
       return InAppBillingBridge.getProductDetails([productId])
         .then((arr) => {
-          if (array.length > 0) {
+          if (arr != null && arr.length > 0) {
             return Promise.resolve(arr[0]);
           } else {
             return Promise.reject("Could not find details.");
@@ -48,7 +48,7 @@ class InAppBilling {
     static getSubscriptionDetails(productId) {
       return InAppBillingBridge.getSubscriptionDetails([productId])
         .then((arr) => {
-          if (array.length > 0) {
+          if (arr != null && arr.length > 0) {
             return Promise.resolve(arr[0]);
           } else {
             return Promise.reject("Could not find details.");
