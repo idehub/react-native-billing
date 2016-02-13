@@ -27,6 +27,18 @@ class InAppBilling {
       return InAppBillingBridge.isSubscribed(productId);
     }
 
+    static isPurchased(productId) {
+      return InAppBillingBridge.isPurchased(productId);
+    }
+
+    static listOwnedProducts() {
+      return InAppBillingBridge.listOwnedProducts();
+    }
+
+    static listOwnedSubscriptions() {
+      return InAppBillingBridge.listOwnedSubscriptions();
+    }
+
     static getProductDetails(productId) {
       return InAppBillingBridge.getProductDetails([productId])
         .then((arr) => {

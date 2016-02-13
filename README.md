@@ -167,6 +167,33 @@ InAppBilling.subscribe('android.test.purchased')
 InAppBilling.isSubscribed('android.test.purchased').then(...);
 ```
 
+### isPurchased(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **purchased:** Boolean
+
+```javascript
+InAppBilling.isPurchased('android.test.purchased').then(...);
+```
+
+### listOwnedProducts()
+##### Returns:
+* **ownedProductIds:** Array of String
+
+```javascript
+InAppBilling.listOwnedProducts().then(...);
+```
+
+### listOwnedSubscriptions()
+##### Returns:
+* **ownedSubscriptionIds:** Array of String
+
+```javascript
+InAppBilling.listOwnedSubscriptions().then(...);
+```
+
 ### getProductDetails(productId)
 ##### Parameter(s)
 * **productId (required):** String

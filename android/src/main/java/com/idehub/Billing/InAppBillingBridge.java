@@ -192,6 +192,48 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    public void isPurchased(final String productId, final Promise promise){
+        if (bp != null) {
+            boolean purchased = bp.isPurchased(productId);
+            promise.resolve(purchased);
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void listOwnedProducts(final Promise promise){
+        if (bp != null) {
+            List<String> purchasedProductIds = bp.listOwnedProducts();
+            WritableArray arr = Arguments.createArray();
+
+            for (int i = 0; i < purchasedProductIds.size(); i++) {
+                arr.pushString(purchasedProductIds.get(i));
+            }
+
+            promise.resolve(arr);
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void listOwnedSubscriptions(final Promise promise){
+        if (bp != null) {
+            List<String> ownedSubscriptionsIds = bp.listOwnedSubscriptions();
+            WritableArray arr = Arguments.createArray();
+
+            for (int i = 0; i < ownedSubscriptionsIds.size(); i++) {
+                arr.pushString(ownedSubscriptionsIds.get(i));
+            }
+
+            promise.resolve(arr);
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
     public void getProductDetails(final ReadableArray productIds, final Promise promise) {
         if (bp != null) {
             try {
