@@ -18,7 +18,7 @@ InAppBilling.open()
 
 ## Installation with rnpm
 1. `npm install --save react-native-billing`
-2. `rnpm link react-native-google-billing`
+2. `rnpm link react-native-billing`
 
 With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy lifting for linking, **but** you will still need add your Google Play license key to the `strings.xml` (step 5).
 
@@ -85,7 +85,7 @@ All  methods returns a `Promise`.
 
 ### open()
 
-**Important:** Must be called to open the service channel to Google Play. Must be called (once!) before any other billing methods can be called.
+**Important:** Opens the service channel to Google Play. Must be called (once!) before any other billing methods can be called.
 
 ```javascript
 InAppBilling.open()
