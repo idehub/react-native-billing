@@ -16,6 +16,7 @@ public class InAppBillingBridgePackage implements ReactPackage {
 
     public InAppBillingBridgePackage(String licenseKey, Activity activity) {
         _licenseKey = licenseKey;
+        _licenseKeySetInConstructor = true;
         _activity = activity;
     }
 
@@ -24,16 +25,17 @@ public class InAppBillingBridgePackage implements ReactPackage {
     }
 
     private String _licenseKey;
+    private Boolean _licenseKeySetInConstructor = false;
     private Activity _activity;
 
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-      		if (_licenseKey == null)
+      		if (!_licenseKeySetInConstructor)
               	modules.add(new InAppBillingBridge(reactContext, _activity));
       		else
-      			    modules.add(new InAppBillingBridge(reactContext, _licenseKey, _activity));
+                modules.add(new InAppBillingBridge(reactContext, _licenseKey, _activity));
 
           return modules;
     }
