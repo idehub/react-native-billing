@@ -20,7 +20,7 @@ InAppBilling.open()
 1. `npm install --save react-native-billing`
 2. `rnpm link react-native-billing`
 
-With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy lifting for linking, **but** you will still need add your Google Play license key to the `strings.xml` (step 5).
+With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy lifting for linking. **But**, you will still need add your Google Play license key to the `strings.xml` (step 5). If you are using a React Native version less than v18.0 you will also have to do step 4.3 (override `onActivityResult`).
 
 ## Manual installation Android
 
@@ -43,7 +43,18 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
   }
   ```
 
-4. Register package in `MainActivity.java`
+4. Edit `MainActivity.java`. Step 4.3 is only required if you are using a lower React Native version than 18.0 and/or your `MainActivity` class does not inherit from `ReactActivity`.
+  1. Add `import com.idehub.Billing.InAppBillingBridgePackage`
+  2. Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage(this))`
+  3. Override `onActivityResult`:
+  ```java
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
+  }
+  ```
+
+   Larger example:
 
   ```java
   // Step 1; import package:
@@ -69,7 +80,13 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
 
           ...
       }
+
+      @Override
+      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+          mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
+      }
       ...
+  // Step 3:
   ```
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 ```xml
