@@ -80,13 +80,12 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
 
           ...
       }
-
+      // Step 3: For RN < v0.18, override onActivityResult
       @Override
       protected void onActivityResult(int requestCode, int resultCode, Intent data) {
           mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
       }
       ...
-  // Step 3:
   ```
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 ```xml
@@ -96,6 +95,20 @@ Alternatively, you can add your license key as a parameter when registering the 
 ```java
 .addPackage(new InAppBillingBridgePackage("YOUR_LICENSE_KEY", this))
 ```
+
+## Testing with static responses
+If you want to test with static responses, you can use reserved productids defined by Google. These are:
+* android.test.purchased
+* android.test.canceled
+* android.test.refunded
+* android.test.item_unavailable
+
+If you want to test with these productids, you will have to use a `null` license key. This is because your actual license key will not validate when using these productids.
+
+In order to do this send in `null` as parameter, along with your Activity-instance, when registering the package:
+`.addPackage(new InAppBillingBridgePackage(null, this))`
+
+[See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
 
 ## Javascript API
 All  methods returns a `Promise`.
