@@ -313,6 +313,57 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         }
     }
 
+    @ReactMethod
+    public void getPurchaseTransactionDetails(final String productId, final Promise promise) {
+        if (bp != null) {
+            TransactionDetails details = bp.getPurchaseTransactionDetails(productId);
+            if (details != null && details.productId.equals(productId))
+            {
+                  WritableMap map = mapTransactionDetails(details);
+                  promise.resolve(map);
+            } else {
+                promise.reject("Could not find transaction details for productId.");
+            }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
+    public void getSubscriptionTransactionDetails(final String productId, final Promise promise) {
+        if (bp != null) {
+            TransactionDetails details = bp.getSubscriptionTransactionDetails(productId);
+            if (details != null && details.productId.equals(productId))
+            {
+                  WritableMap map = mapTransactionDetails(details);
+                  promise.resolve(map);
+            } else {
+                promise.reject("Could not find transaction details for productId.");
+            }
+        } else {
+            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    private WritableMap mapTransactionDetails(TransactionDetails details) {
+        WritableMap map = Arguments.createMap();
+
+        map.putString("receiptData", details.purchaseInfo.responseData.toString());
+
+        if (details.purchaseInfo.signature != null)
+            map.putString("receiptSignature", details.purchaseInfo.signature.toString());
+
+        map.putString("productId", details.productId);
+        map.putString("orderId", details.orderId);
+        map.putString("purchaseToken", details.purchaseToken);
+        map.putString("purchaseTime", details.purchaseTime.toString());
+
+        ResponseData responseData = details.purchaseInfo.parseResponseData();
+        map.putString("purchaseState", responseData.purchaseState.toString());
+
+        return map;
+    }
+
     @Override
     public void onPurchaseHistoryRestored() {
         /*
