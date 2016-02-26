@@ -101,24 +101,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (productId == productId && details != null)
+        if (details != null && productId.equals(details.productId))
         {
             try {
-                WritableMap map = Arguments.createMap();
-
-                map.putString("receiptData", details.purchaseInfo.responseData.toString());
-
-                if (details.purchaseInfo.signature != null)
-                    map.putString("receiptSignature", details.purchaseInfo.signature.toString());
-
-                map.putString("productId", details.productId);
-                map.putString("orderId", details.orderId);
-                map.putString("purchaseToken", details.purchaseToken);
-                map.putString("purchaseTime", details.purchaseTime.toString());
-
-                ResponseData responseData = details.purchaseInfo.parseResponseData();
-                map.putString("purchaseState", responseData.purchaseState.toString());
-
+                WritableMap map = mapTransactionDetails(details);
                 resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, map);
             } catch (Exception ex) {
                 rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Failure on purchase or subscribe callback: " + ex.getMessage());
@@ -317,7 +303,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void getPurchaseTransactionDetails(final String productId, final Promise promise) {
         if (bp != null) {
             TransactionDetails details = bp.getPurchaseTransactionDetails(productId);
-            if (details != null && details.productId.equals(productId))
+            if (details != null && productId.equals(details.productId))
             {
                   WritableMap map = mapTransactionDetails(details);
                   promise.resolve(map);
@@ -333,7 +319,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void getSubscriptionTransactionDetails(final String productId, final Promise promise) {
         if (bp != null) {
             TransactionDetails details = bp.getSubscriptionTransactionDetails(productId);
-            if (details != null && details.productId.equals(productId))
+            if (details != null && productId.equals(details.productId))
             {
                   WritableMap map = mapTransactionDetails(details);
                   promise.resolve(map);
