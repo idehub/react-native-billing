@@ -53,6 +53,14 @@ class InAppBilling {
         });
     }
 
+    static getPurchaseTransactionDetails(productId) {
+      return InAppBillingBridge.getPurchaseTransactionDetails(productId);
+    }
+
+    static getSubscriptionTransactionDetails(productId) {
+      return InAppBillingBridge.getSubscriptionTransactionDetails(productId);
+    }
+
     static getProductDetailsArray(productIds) {
       return InAppBillingBridge.getProductDetails(productIds);
     }
