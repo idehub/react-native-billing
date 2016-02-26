@@ -180,7 +180,7 @@ InAppBilling.consumePurchase('android.test.purchased').then(...);
   * **receiptData:** String
 
 ```javascript
-InAppBilling.subscribe('android.test.purchased')
+InAppBilling.subscribe('android.test.subscription')
 .then((details) => {
   console.log(details)
 });
@@ -194,7 +194,7 @@ InAppBilling.subscribe('android.test.purchased')
 * **subscribed:** Boolean
 
 ```javascript
-InAppBilling.isSubscribed('android.test.purchased').then(...);
+InAppBilling.isSubscribed('android.test.subscription').then(...);
 ```
 
 ### isPurchased(productId)
@@ -280,4 +280,46 @@ InAppBilling.getSubscriptionDetails('android.test.subscription').then(...);
 
 ```javascript
 InAppBilling.getSubscriptionDetailsArray(['android.test.subscription', 'android.test.subscription2']).then(...);
+```
+
+### getPurchaseTransactionDetails(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **transactionDetails:** Object:
+  * **productId:** String
+  * **orderId:** String
+  * **purchaseToken:** String
+  * **purchaseTime:** String
+  * **purchaseState:** String
+  * **receiptSignature:** String
+  * **receiptData:** String
+
+```javascript
+InAppBilling.getPurchaseTransactionDetails('android.test.purchased')
+.then((details) => {
+  console.log(details)
+});
+```
+
+### getSubscriptionTransactionDetails(productId)
+##### Parameter(s)
+* **productId (required):** String
+
+##### Returns:
+* **transactionDetails:** Object:
+  * **productId:** String
+  * **orderId:** String
+  * **purchaseToken:** String
+  * **purchaseTime:** String
+  * **purchaseState:** String
+  * **receiptSignature:** String
+  * **receiptData:** String
+
+```javascript
+InAppBilling.getSubscriptionTransactionDetails('android.test.subscription')
+.then((details) => {
+  console.log(details)
+});
 ```
