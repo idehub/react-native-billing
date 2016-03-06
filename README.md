@@ -110,6 +110,18 @@ In order to do this send in `null` as parameter, along with your Activity-instan
 
 [See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
 
+## Testing with your own In-App Products
+You can always test with static responses but it has limited functionalities. Testing with real in-app products will be like production. Before all, you'll need to do the following ; 
+* I assume you've already created your Google Play Developer account and an application draft.
+* Now you need to create In-app Products at Play Developer Console and activate it ( a button at the top right )
+* Then you can write the JS codes like explained in Javascript API section, I suggest you to use `getProductDetails` function to see if it's working properly.
+* After you ready to test, you'll need to properly create a signed APK. You can follow the guide [here](https://facebook.github.io/react-native/docs/signed-apk-android.html). 
+* When you have the APK, you need to upload it to Play Developer Console, Alfa or Beta section will be OK.
+* After uploading process, you have to publish it to market. Don't worry, if your APK belongs in Alfa or Beta section, publishing will not be available for general public. ( It could take 1 - 2 hours process APK by Google )
+* The final part is, you'll need to create a Open Beta Testing or Open Alfa Testing. So console will give you a signup URL after you approved open testing. Now put this URL in the browser of your **testing device** (it must be a physical device, not a emulator ) signup from the URL and download the app where it redirected.
+* Try to buy something with Open Beta User, it will ask your credit cart details but you will not be charged.
+
+
 ## Javascript API
 All  methods returns a `Promise`.
 
