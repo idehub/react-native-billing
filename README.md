@@ -110,17 +110,16 @@ In order to do this send in `null` as parameter, along with your Activity-instan
 
 [See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
 
-## Testing with your own In-App Products
-You can always test with static responses but it has limited functionalities. Testing with real in-app products will be like production. Before all, you'll need to do the following ; 
-* I assume you've already created your Google Play Developer account and an application draft.
-* Now you need to create In-app Products at Play Developer Console and activate it ( a button at the top right )
-* Then you can write the JS codes like explained in Javascript API section, I suggest you to use `getProductDetails` function to see if it's working properly.
-* After you ready to test, you'll need to properly create a signed APK. You can follow the guide [here](https://facebook.github.io/react-native/docs/signed-apk-android.html). 
-* When you have the APK, you need to upload it to Play Developer Console, Alfa or Beta section will be OK.
-* After uploading process, you have to publish it to market. Don't worry, if your APK belongs in Alfa or Beta section, publishing will not be available for general public. ( It could take 1 - 2 hours process APK by Google )
-* The final part is, you'll need to create a Open Beta Testing or Open Alfa Testing. So console will give you a signup URL after you approved open testing. Now put this URL in the browser of your **testing device** (it must be a physical device, not a emulator ) signup from the URL and download the app where it redirected.
-* Try to buy something with Open Beta User, it will ask your credit cart details but you will not be charged.
-
+## Testing with your own In-app products
+Testing with static responses is limited, because you are only able to test the purchase-method. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following: 
+* I will assume you've already created your Google Play Developer account and an application there.
+* Now you need to create In-app Products under your application at Play Developer Console and activate it (press the button at the top right).
+* Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
+* When you're ready to test, you'll need to properly create a signed APK. You can follow this  [guide](https://facebook.github.io/react-native/docs/signed-apk-android.html). 
+* When you have the APK, you need to upload it to Play Developer Console, either the Alpha or the Beta channel will be OK.
+* After uploading, you will have to publish it to the market. Don't worry, when publishing the APK to the Alpha or Beta channel the APK will not be available for general public. (**ImportantÆ*: It might take several hours for Google to process the APK).
+* The final part is, you'll need to create an add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) signup from the URL and download the app where it redirected.
+* Try to buy something with the device. The purchase will eventually be cancelled, but you can also do this manually through your Google Merchant wallet.
 
 ## Javascript API
 All  methods returns a `Promise`.
@@ -174,7 +173,7 @@ InAppBilling.purchase('android.test.purchased')
 * **consumed:** Boolean (If consumed or not)
 
 ```javascript
-InAppBilling.consumePurchase('android.test.purchased').then(...);
+InAppBilling.consumePurchase('your.inapp.productid').then(...);
 ```
 
 ### subscribe(productId)
@@ -192,7 +191,7 @@ InAppBilling.consumePurchase('android.test.purchased').then(...);
   * **receiptData:** String
 
 ```javascript
-InAppBilling.subscribe('android.test.subscription')
+InAppBilling.subscribe('your.inapp.productid')
 .then((details) => {
   console.log(details)
 });
@@ -206,7 +205,7 @@ InAppBilling.subscribe('android.test.subscription')
 * **subscribed:** Boolean
 
 ```javascript
-InAppBilling.isSubscribed('android.test.subscription').then(...);
+InAppBilling.isSubscribed('your.inapp.productid').then(...);
 ```
 
 ### isPurchased(productId)
@@ -217,7 +216,7 @@ InAppBilling.isSubscribed('android.test.subscription').then(...);
 * **purchased:** Boolean
 
 ```javascript
-InAppBilling.isPurchased('android.test.purchased').then(...);
+InAppBilling.isPurchased('your.inapp.productid').then(...);
 ```
 
 ### listOwnedProducts()
@@ -251,7 +250,7 @@ InAppBilling.listOwnedSubscriptions().then(...);
   * **priceText:** String
 
 ```javascript
-InAppBilling.getProductDetails('android.test.purchased').then(...);
+InAppBilling.getProductDetails('your.inapp.productid').then(...);
 ```
 
 ### getProductDetailsArray(productIds)
@@ -262,7 +261,7 @@ InAppBilling.getProductDetails('android.test.purchased').then(...);
 * **productDetailsArray:** Array of the productDetails (same as above)
 
 ```javascript
-InAppBilling.getProductDetailsArray(['android.test.purchased', 'android.test.purchased2']).then(...);
+InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.productid2']).then(...);
 ```
 
 ### getSubscriptionDetails(productId)
@@ -280,7 +279,7 @@ InAppBilling.getProductDetailsArray(['android.test.purchased', 'android.test.pur
   * **priceText:** String
 
 ```javascript
-InAppBilling.getSubscriptionDetails('android.test.subscription').then(...);
+InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
 ```
 
 ### getSubscriptionDetailsArray(productIds)
@@ -291,7 +290,7 @@ InAppBilling.getSubscriptionDetails('android.test.subscription').then(...);
 * **productDetailsArray:** Array of the productDetails (same as above)
 
 ```javascript
-InAppBilling.getSubscriptionDetailsArray(['android.test.subscription', 'android.test.subscription2']).then(...);
+InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.productid2']).then(...);
 ```
 
 ### getPurchaseTransactionDetails(productId)
@@ -309,7 +308,7 @@ InAppBilling.getSubscriptionDetailsArray(['android.test.subscription', 'android.
   * **receiptData:** String
 
 ```javascript
-InAppBilling.getPurchaseTransactionDetails('android.test.purchased')
+InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
 .then((details) => {
   console.log(details)
 });
@@ -330,7 +329,7 @@ InAppBilling.getPurchaseTransactionDetails('android.test.purchased')
   * **receiptData:** String
 
 ```javascript
-InAppBilling.getSubscriptionTransactionDetails('android.test.subscription')
+InAppBilling.getSubscriptionTransactionDetails('your.inapp.productid')
 .then((details) => {
   console.log(details)
 });
