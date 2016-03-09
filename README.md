@@ -103,6 +103,8 @@ If you want to test with static responses, you can use reserved productids defin
 * android.test.refunded
 * android.test.item_unavailable
 
+You will only be able to test the `purchase` function with static responses.
+
 If you want to test with these productids, you will have to use a `null` license key. This is because your actual license key will not validate when using these productids.
 
 In order to do this send in `null` as parameter, along with your Activity-instance, when registering the package:
@@ -111,7 +113,7 @@ In order to do this send in `null` as parameter, along with your Activity-instan
 [See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
 
 ## Testing with your own In-app products
-Testing with static responses is limited, because you are only able to test the purchase-method. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following: 
+Testing with static responses is limited, because you are only able to test the `purchase` function. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following: 
 * I will assume you've already created your Google Play Developer account and an application there.
 * Now you need to create an In-app product under your application at the Google Play Developer Console and activate it (press the button at the top right).
 * Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
