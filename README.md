@@ -113,13 +113,16 @@ In order to do this send in `null` as parameter, along with your Activity-instan
 ## Testing with your own In-app products
 Testing with static responses is limited, because you are only able to test the purchase-method. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following: 
 * I will assume you've already created your Google Play Developer account and an application there.
-* Now you need to create In-app Products under your application at Play Developer Console and activate it (press the button at the top right).
+* Now you need to create an In-app product under your application at the Google Play Developer Console and activate it (press the button at the top right).
 * Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
-* When you're ready to test, you'll need to properly create a signed APK. You can follow this  [guide](https://facebook.github.io/react-native/docs/signed-apk-android.html). 
-* When you have the APK, you need to upload it to Play Developer Console, either the Alpha or the Beta channel will be OK.
-* After uploading, you will have to publish it to the market. Don't worry, when publishing the APK to the Alpha or Beta channel the APK will not be available for general public. (**ImportantÆ*: It might take several hours for Google to process the APK).
-* The final part is, you'll need to create an add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) signup from the URL and download the app where it redirected.
+* When you're ready to test, you'll need to properly create a signed APK. You can follow this  [guide](https://facebook.github.io/react-native/docs/signed-apk-android.html). (**Important**: You'll have to install the APK as described in the guide. Not in the way you'd normally debug an React Native app on Android).
+* When you have the APK, you need to upload it to Play Developer Console, either the Alpha or the Beta channel will be fine. Remember your app will need to have a proper `applicationId` (normally your package name) and `versionCode` set in `android/app/build.gradle`.
+* After uploading, you will have to publish it to the market. Don't worry, when publishing the APK to the Alpha or Beta channel the APK will not be available for general public. (**Important**: It might take several hours for Google to process the APK).
+* The final part is, you'll need to add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) and signup, and download the app where it redirected.
 * Try to buy something with the device. The purchase will eventually be cancelled, but you can also do this manually through your Google Merchant wallet.
+
+**Important**: You can only test on a physical Android device, not from an emulator. 
+
 
 ## Javascript API
 All  methods returns a `Promise`.
