@@ -286,8 +286,7 @@ InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.product
   * **currency:** String
   * **priceValue:**  Double
   * **priceText:** String
-  * **developerPayload:** String
-  * 
+
 ```javascript
 InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
 ```
@@ -317,7 +316,7 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
-  * 
+
 ```javascript
 InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
 .then((details) => {
@@ -338,6 +337,7 @@ InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
+  * **developerPayload:** String
 
 ```javascript
 InAppBilling.getSubscriptionTransactionDetails('your.inapp.productid')
