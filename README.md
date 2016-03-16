@@ -152,6 +152,7 @@ InAppBilling.open()
 ### purchase(productId)
 ##### Parameter(s)
 * **productId (required):** String
+* **developerPayload:** String
 
 ##### Returns:
 * **transactionDetails:** Object:
@@ -162,7 +163,8 @@ InAppBilling.open()
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
-
+  * **developerPayload:** String
+  
 ```javascript
 InAppBilling.purchase('android.test.purchased')
 .then((details) => {
@@ -184,6 +186,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
 ### subscribe(productId)
 ##### Parameter(s)
 * **productId (required):** String
+* **developerPayload:** String
 
 ##### Returns:
 * **transactionDetails:** Object:
@@ -194,7 +197,8 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
-
+  * **developerPayload:** String
+   
 ```javascript
 InAppBilling.subscribe('your.inapp.productid')
 .then((details) => {
@@ -311,6 +315,7 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
+  * **developerPayload:** String
 
 ```javascript
 InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
@@ -332,6 +337,7 @@ InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
+  * **developerPayload:** String
 
 ```javascript
 InAppBilling.getSubscriptionTransactionDetails('your.inapp.productid')

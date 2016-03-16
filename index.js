@@ -11,16 +11,16 @@ class InAppBilling {
       return InAppBillingBridge.close();
     }
 
-    static purchase(productId) {
-      return InAppBillingBridge.purchase(productId);
+    static purchase(productId, developerPayload = null) {
+      return InAppBillingBridge.purchase(productId, developerPayload);
     }
 
     static consumePurchase(productId) {
       return InAppBillingBridge.consumePurchase(productId);
     }
 
-    static subscribe(productId) {
-      return InAppBillingBridge.subscribe(productId);
+    static subscribe(productId, developerPayload = null) {
+      return InAppBillingBridge.subscribe(productId, developerPayload);
     }
 
     static isSubscribed(productId) {

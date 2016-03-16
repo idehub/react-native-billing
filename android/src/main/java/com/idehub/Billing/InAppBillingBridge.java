@@ -121,10 +121,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void purchase(final String productId, final Promise promise){
+    public void purchase(final String productId, final String developerPayload, final Promise promise){
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
-                boolean purchaseProcessStarted = bp.purchase(_activity, productId);
+                boolean purchaseProcessStarted = bp.purchase(_activity, productId, developerPayload);
                 if (!purchaseProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start purchase process.");
             } else {
@@ -153,10 +153,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void subscribe(final String productId, final Promise promise){
+    public void subscribe(final String productId, final String developerPayload, final Promise promise){
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
-                boolean subscribeProcessStarted = bp.subscribe(_activity, productId);
+                boolean subscribeProcessStarted = bp.subscribe(_activity, productId, developerPayload);
                 if (!subscribeProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start subscribe process.");
             } else {
@@ -346,6 +346,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
         ResponseData responseData = details.purchaseInfo.parseResponseData();
         map.putString("purchaseState", responseData.purchaseState.toString());
+
+        if (responseData.developerPayload != null)
+            map.putString("developerPayload", responseData.developerPayload);
 
         return map;
     }
