@@ -187,7 +187,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
 ##### Parameter(s)
 * **productId (required):** String
 * **developerPayload:** String
-* 
+
 ##### Returns:
 * **transactionDetails:** Object:
   * **productId:** String
@@ -198,7 +198,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
-  * 
+   
 ```javascript
 InAppBilling.subscribe('your.inapp.productid')
 .then((details) => {
@@ -286,7 +286,8 @@ InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.product
   * **currency:** String
   * **priceValue:**  Double
   * **priceText:** String
-
+  * **developerPayload:** String
+  * 
 ```javascript
 InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
 ```
@@ -315,7 +316,8 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
   * **purchaseState:** String
   * **receiptSignature:** String
   * **receiptData:** String
-
+  * **developerPayload:** String
+  * 
 ```javascript
 InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
 .then((details) => {
