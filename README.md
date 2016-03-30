@@ -44,7 +44,7 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
   ```
 
 4. Edit `MainActivity.java`. Step 4.3 is only required if you are using a lower React Native version than 18.0 and/or your `MainActivity` class does not inherit from `ReactActivity`.
-  1. Add `import com.idehub.Billing.InAppBillingBridgePackage`
+  1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
   2. Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage(this))`
   3. Override `onActivityResult`:
   ```java
