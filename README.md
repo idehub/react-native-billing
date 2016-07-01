@@ -160,7 +160,7 @@ InAppBilling.open()
   * **orderId:** String
   * **purchaseToken:** String
   * **purchaseTime:** String
-  * **purchaseState:** String
+  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
@@ -194,7 +194,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
   * **orderId:** String
   * **purchaseToken:** String
   * **purchaseTime:** String
-  * **purchaseState:** String
+  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
@@ -312,7 +312,7 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
   * **orderId:** String
   * **purchaseToken:** String
   * **purchaseTime:** String
-  * **purchaseState:** String
+  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
@@ -334,7 +334,7 @@ InAppBilling.getPurchaseTransactionDetails('your.inapp.productid')
   * **orderId:** String
   * **purchaseToken:** String
   * **purchaseTime:** String
-  * **purchaseState:** String
+  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
