@@ -29,23 +29,23 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     final Activity _activity;
     BillingProcessor bp;
 
-    public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
+    public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey) {
         super(reactContext);
         _reactContext = reactContext;
         LICENSE_KEY = licenseKey;
-        _activity = activity;
+        _activity = getCurrentActivity();
 
         reactContext.addActivityEventListener(this);
     }
 
-    public InAppBillingBridge(ReactApplicationContext reactContext, Activity activity) {
+    public InAppBillingBridge(ReactApplicationContext reactContext) {
         super(reactContext);
         _reactContext = reactContext;
         int keyResourceId = _reactContext
                 .getResources()
                 .getIdentifier("RNB_GOOGLE_PLAY_LICENSE_KEY", "string", _reactContext.getPackageName());
         LICENSE_KEY = _reactContext.getString(keyResourceId);
-        _activity = activity;
+        _activity = getCurrentActivity();
 
         reactContext.addActivityEventListener(this);
     }
