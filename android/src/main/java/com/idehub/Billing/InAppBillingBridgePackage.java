@@ -17,6 +17,9 @@ public class InAppBillingBridgePackage implements ReactPackage {
         _licenseKeySetInConstructor = true;
     }
 
+    public InAppBillingBridgePackage() {
+    }
+
     private String _licenseKey;
     private Boolean _licenseKeySetInConstructor = false;
 

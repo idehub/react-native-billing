@@ -43,58 +43,79 @@ With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy liftin
   }
   ```
 
-4. Edit `MainActivity.java`. Step 4.3 is only required if you are using a lower React Native version than 18.0 and/or your `MainActivity` class does not inherit from `ReactActivity`.
-  1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
-  2. Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage(this))`
-  3. Override `onActivityResult`:
-  ```java
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
-  }
-  ```
-
-   Larger example:
-
-  ```java
-  // Step 1; import package:
-  import com.idehub.Billing.InAppBillingBridgePackage;
-
-  public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
-      ...
-
-      @Override
-      protected void onCreate(Bundle savedInstanceState) {
-          ...
-
-          mReactInstanceManager = ReactInstanceManager.builder()
-                  .setApplication(getApplication())
-                  .setBundleAssetName("index.android.bundle")
-                  .setJSMainModuleName("index.android")
-                  .addPackage(new MainReactPackage())
-                  // Step 2; register package, with your and send in the MainActivity as a parameter (this):
-                  .addPackage(new InAppBillingBridgePackage(this))
-                  .setUseDeveloperSupport(BuildConfig.DEBUG)
-                  .setInitialLifecycleState(LifecycleState.RESUMED)
-                  .build();
-
-          ...
-      }
-      // Step 3: For RN < v0.18, override onActivityResult
-      @Override
-      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+4. Update MainActivity or MainApplication depending on React Native version.
+  - React Native version >= 0.29
+    Edit `MainApplication.java`.
+    1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
+    2. Register package:
+    ```java
+    @Override
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+        new MainReactPackage(),
+        // add package here
+        new InAppBillingBridgePackage()
+      );
+    }
+    ```
+  - React Native version < 0.29
+    Edit `MainActivity.java`. Step 4.3 is only required if you are using a lower React Native version than 18.0 and/or your `MainActivity` class does not inherit from `ReactActivity`.
+    1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
+    2. Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage())`
+    3. Override `onActivityResult`:
+    ```java
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
           mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
-      }
-      ...
-  ```
+    }
+    ```
+
+     Larger example:
+
+    ```java
+    // Step 1; import package:
+    import com.idehub.Billing.InAppBillingBridgePackage;
+
+    public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
+        ...
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            ...
+
+            mReactInstanceManager = ReactInstanceManager.builder()
+                    .setApplication(getApplication())
+                    .setBundleAssetName("index.android.bundle")
+                    .setJSMainModuleName("index.android")
+                    .addPackage(new MainReactPackage())
+                    // Step 2; register package
+                    .addPackage(new InAppBillingBridgePackage())
+                    .setUseDeveloperSupport(BuildConfig.DEBUG)
+                    .setInitialLifecycleState(LifecycleState.RESUMED)
+                    .build();
+
+            ...
+        }
+        // Step 3: For RN < v0.18, override onActivityResult
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
+        }
+        ...
+    ```
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 ```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
 ```
 Alternatively, you can add your license key as a parameter when registering the `InAppBillingBridgePackage`, like so:
 ```java
-.addPackage(new InAppBillingBridgePackage("YOUR_LICENSE_KEY", this))
+.addPackage(new InAppBillingBridgePackage("YOUR_LICENSE_KEY"))
 ```
+or for React Native 29+
+```java
+new InAppBillingBridgePackage("YOUR_LICENSE_KEY")
+```
+
 
 ## Testing with static responses
 If you want to test with static responses, you can use reserved productids defined by Google. These are:
@@ -113,7 +134,7 @@ In order to do this send in `null` as parameter, along with your Activity-instan
 [See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
 
 ## Testing with your own In-app products
-Testing with static responses is limited, because you are only able to test the `purchase` function. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following: 
+Testing with static responses is limited, because you are only able to test the `purchase` function. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following:
 * I will assume you've already created your Google Play Developer account and an application there.
 * Now you need to create an In-app product under your application at the Google Play Developer Console and activate it (press the button at the top right).
 * Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
@@ -123,7 +144,7 @@ Testing with static responses is limited, because you are only able to test the 
 * The final part is, you'll need to add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) and signup, and download the app where it redirected.
 * Try to buy something with the device. The purchase will eventually be cancelled, but you can also do this manually through your Google Merchant wallet.
 
-**Important**: You can only test on a physical Android device, not from an emulator. 
+**Important**: You can only test on a physical Android device, not from an emulator.
 
 
 ## Javascript API
@@ -164,7 +185,7 @@ InAppBilling.open()
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
-  
+
 ```javascript
 InAppBilling.purchase('android.test.purchased')
 .then((details) => {
@@ -198,7 +219,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
   * **receiptSignature:** String
   * **receiptData:** String
   * **developerPayload:** String
-   
+
 ```javascript
 InAppBilling.subscribe('your.inapp.productid')
 .then((details) => {
