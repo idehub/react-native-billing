@@ -26,26 +26,23 @@ import java.util.Map;
 public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
-    final Activity _activity;
     BillingProcessor bp;
 
-    public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey, Activity activity) {
+    public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey) {
         super(reactContext);
         _reactContext = reactContext;
         LICENSE_KEY = licenseKey;
-        _activity = activity;
 
         reactContext.addActivityEventListener(this);
     }
 
-    public InAppBillingBridge(ReactApplicationContext reactContext, Activity activity) {
+    public InAppBillingBridge(ReactApplicationContext reactContext) {
         super(reactContext);
         _reactContext = reactContext;
         int keyResourceId = _reactContext
                 .getResources()
                 .getIdentifier("RNB_GOOGLE_PLAY_LICENSE_KEY", "string", _reactContext.getPackageName());
         LICENSE_KEY = _reactContext.getString(keyResourceId);
-        _activity = activity;
 
         reactContext.addActivityEventListener(this);
     }
@@ -124,7 +121,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void purchase(final String productId, final String developerPayload, final Promise promise){
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
-                boolean purchaseProcessStarted = bp.purchase(_activity, productId, developerPayload);
+                boolean purchaseProcessStarted = bp.purchase(getCurrentActivity(), productId, developerPayload);
                 if (!purchaseProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start purchase process.");
             } else {
@@ -156,7 +153,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void subscribe(final String productId, final String developerPayload, final Promise promise){
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
-                boolean subscribeProcessStarted = bp.subscribe(_activity, productId, developerPayload);
+                boolean subscribeProcessStarted = bp.subscribe(getCurrentActivity(), productId, developerPayload);
                 if (!subscribeProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start subscribe process.");
             } else {

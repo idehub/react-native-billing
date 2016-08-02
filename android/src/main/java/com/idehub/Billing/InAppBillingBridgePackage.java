@@ -1,7 +1,5 @@
 package com.idehub.Billing;
 
-import android.app.Activity;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -14,28 +12,25 @@ import java.util.List;
 
 public class InAppBillingBridgePackage implements ReactPackage {
 
-    public InAppBillingBridgePackage(String licenseKey, Activity activity) {
+    public InAppBillingBridgePackage(String licenseKey) {
         _licenseKey = licenseKey;
         _licenseKeySetInConstructor = true;
-        _activity = activity;
     }
 
-    public InAppBillingBridgePackage(Activity activity) {
-        _activity = activity;
+    public InAppBillingBridgePackage() {
     }
 
     private String _licenseKey;
     private Boolean _licenseKeySetInConstructor = false;
-    private Activity _activity;
 
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
       		if (!_licenseKeySetInConstructor)
-              	modules.add(new InAppBillingBridge(reactContext, _activity));
+              	modules.add(new InAppBillingBridge(reactContext));
       		else
-                modules.add(new InAppBillingBridge(reactContext, _licenseKey, _activity));
+                modules.add(new InAppBillingBridge(reactContext, _licenseKey));
 
           return modules;
     }
