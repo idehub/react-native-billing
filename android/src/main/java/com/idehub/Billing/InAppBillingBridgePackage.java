@@ -39,6 +39,11 @@ public class InAppBillingBridgePackage implements ReactPackage {
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
+    
+    @Override
+    public void onNewIntent(Intent intent){
+        
+    }
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
