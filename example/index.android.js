@@ -1,17 +1,18 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
+ * @flow
  */
-'use strict';
-import React, {
+
+import React, { Component } from 'react';
+import {
   AppRegistry,
-  Component,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 
-const InAppBilling = require('react-native-billing');
+import InAppBilling from 'react-native-billing';
 
 class example extends Component {
   constructor(props) {
