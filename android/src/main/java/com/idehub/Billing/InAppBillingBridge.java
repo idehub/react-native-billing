@@ -362,8 +362,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         return BillingProcessor.isIabServiceAvailable(_reactContext);
     }
 
-    @Override
+    @Deprecated
     public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+        if (bp != null)
+            bp.handleActivityResult(requestCode, resultCode, intent);
+    }
+
+    public void onActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
         if (bp != null)
             bp.handleActivityResult(requestCode, resultCode, intent);
     }
