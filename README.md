@@ -16,11 +16,11 @@ InAppBilling.open()
 });
 ```
 
-## Installation with rnpm
-1. `npm install --save react-native-billing`
-2. `rnpm link react-native-billing`
+## Installation and linking
+1. `npm install --save react-native-billing` or `yarn add react-native-billing`
+2. `react-native link react-native-billing`
 
-With this, [rnpm](https://github.com/rnpm/rnpm) will do most of the heavy lifting for linking. **But**, you will still need add your Google Play license key to the `strings.xml` (step 5). If you are using a React Native version less than v18.0 you will also have to do step 4.3 (override `onActivityResult`).
+With this, the `link`command will do most of the heavy lifting for native linking. **But**, you will still need add your Google Play license key to the `strings.xml` (step 5). If you are using a React Native version less than v18.0 you will also have to do step 4.3 (override `onActivityResult`).
 
 ## Manual installation Android
 
