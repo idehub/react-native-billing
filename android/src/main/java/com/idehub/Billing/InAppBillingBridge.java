@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.anjlab.android.iab.v3.PurchaseInfo.ResponseData;
+import com.anjlab.android.iab.v3.PurchaseData;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -75,13 +75,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                         rejectPromise(PromiseConstants.OPEN, "Failure on open: " + ex.getMessage());
                     }
                 } else {
-                    promise.reject("Previous open operation is not resolved.");
+                    promise.reject("EUNSPECIFIED", "Previous open operation is not resolved.");
                 }
             } else {
-                promise.reject("Channel is already open. Call close() on InAppBilling to be able to open().");
+                promise.reject("EUNSPECIFIED", "Channel is already open. Call close() on InAppBilling to be able to open().");
             }
         } else {
-            promise.reject("InAppBilling is not available. InAppBilling will not work/test on an emulator, only a physical Android device.");
+            promise.reject("EUNSPECIFIED", "InAppBilling is not available. InAppBilling will not work/test on an emulator, only a physical Android device.");
         }
     }
 
@@ -98,7 +98,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (details != null && productId.equals(details.productId))
+        if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId))
         {
             try {
                 WritableMap map = mapTransactionDetails(details);
@@ -125,10 +125,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 if (!purchaseProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start purchase process.");
             } else {
-                promise.reject("Previous purchase or subscribe operation is not resolved.");
+                promise.reject("EUNSPECIFIED", "Previous purchase or subscribe operation is not resolved.");
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -140,12 +140,12 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 if (consumed)
                     promise.resolve(true);
                 else
-                    promise.reject("Could not consume purchase");
+                    promise.reject("EUNSPECIFIED", "Could not consume purchase");
             } catch (Exception ex) {
-                promise.reject("Failure on consume: " + ex.getMessage());
+                promise.reject("EUNSPECIFIED", "Failure on consume: " + ex.getMessage());
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -157,10 +157,10 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                 if (!subscribeProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start subscribe process.");
             } else {
-                promise.reject("Previous subscribe or purchase operation is not resolved.");
+                promise.reject("EUNSPECIFIED", "Previous subscribe or purchase operation is not resolved.");
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -170,7 +170,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             boolean subscribed = bp.isSubscribed(productId);
             promise.resolve(subscribed);
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -180,7 +180,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             boolean purchased = bp.isPurchased(productId);
             promise.resolve(purchased);
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -196,7 +196,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
             promise.resolve(arr);
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -212,7 +212,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
             promise.resolve(arr);
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -246,13 +246,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
                     promise.resolve(arr);
                 } else {
-                    promise.reject("Details was not found.");
+                    promise.reject("EUNSPECIFIED", "Details was not found.");
                 }
             } catch (Exception ex) {
-                promise.reject("Failure on getting product details: " + ex.getMessage());
+                promise.reject("EUNSPECIFIED", "Failure on getting product details: " + ex.getMessage());
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -286,13 +286,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
                     promise.resolve(arr);
                 } else {
-                    promise.reject("Details was not found.");
+                    promise.reject("EUNSPECIFIED", "Details was not found.");
                 }
             } catch (Exception ex) {
-                promise.reject("Failure on getting product details: " + ex.getMessage());
+                promise.reject("EUNSPECIFIED", "Failure on getting product details: " + ex.getMessage());
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -300,15 +300,15 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void getPurchaseTransactionDetails(final String productId, final Promise promise) {
         if (bp != null) {
             TransactionDetails details = bp.getPurchaseTransactionDetails(productId);
-            if (details != null && productId.equals(details.productId))
+            if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId))
             {
                   WritableMap map = mapTransactionDetails(details);
                   promise.resolve(map);
             } else {
-                promise.reject("Could not find transaction details for productId.");
+                promise.reject("EUNSPECIFIED", "Could not find transaction details for productId.");
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -316,15 +316,15 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     public void getSubscriptionTransactionDetails(final String productId, final Promise promise) {
         if (bp != null) {
             TransactionDetails details = bp.getSubscriptionTransactionDetails(productId);
-            if (details != null && productId.equals(details.productId))
+            if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId))
             {
                   WritableMap map = mapTransactionDetails(details);
                   promise.resolve(map);
             } else {
-                promise.reject("Could not find transaction details for productId.");
+                promise.reject("EUNSPECIFIED", "Could not find transaction details for productId.");
             }
         } else {
-            promise.reject("Channel is not opened. Call open() on InAppBilling.");
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
     }
 
@@ -336,16 +336,16 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         if (details.purchaseInfo.signature != null)
             map.putString("receiptSignature", details.purchaseInfo.signature.toString());
 
-        map.putString("productId", details.productId);
-        map.putString("orderId", details.orderId);
-        map.putString("purchaseToken", details.purchaseToken);
-        map.putString("purchaseTime", details.purchaseTime.toString());
+        PurchaseData purchaseData = details.purchaseInfo.purchaseData;
 
-        ResponseData responseData = details.purchaseInfo.parseResponseData();
-        map.putString("purchaseState", responseData.purchaseState.toString());
+        map.putString("productId", purchaseData.productId);
+        map.putString("orderId", purchaseData.orderId);
+        map.putString("purchaseToken", purchaseData.purchaseToken);
+        map.putString("purchaseTime", purchaseData.purchaseTime.toString());
+        map.putString("purchaseState", purchaseData.purchaseState.toString());
 
-        if (responseData.developerPayload != null)
-            map.putString("developerPayload", responseData.developerPayload);
+        if (purchaseData.developerPayload != null)
+            map.putString("developerPayload", purchaseData.developerPayload);
 
         return map;
     }
@@ -375,7 +375,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onNewIntent(Intent intent){
-        
+
     }
 
     HashMap<String, Promise> mPromiseCache = new HashMap<>();
@@ -391,7 +391,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     synchronized void rejectPromise(String key, String reason) {
         if (mPromiseCache.containsKey(key)) {
             Promise promise = mPromiseCache.get(key);
-            promise.reject(reason);
+            promise.reject("EUNSPECIFIED", reason);
             mPromiseCache.remove(key);
         }
     }
