@@ -341,8 +341,11 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         map.putString("productId", purchaseData.productId);
         map.putString("orderId", purchaseData.orderId);
         map.putString("purchaseToken", purchaseData.purchaseToken);
-        map.putString("purchaseTime", purchaseData.purchaseTime.toString());
-        map.putString("purchaseState", purchaseData.purchaseState.toString());
+        map.putString("purchaseTime", purchaseData.purchaseTime == null
+          ? "" : purchaseData.purchaseTime.toString());
+        map.putString("purchaseState", purchaseData.purchaseState == null
+          ? "" : purchaseData.purchaseState.toString());
+
 
         if (purchaseData.developerPayload != null)
             map.putString("developerPayload", purchaseData.developerPayload);
