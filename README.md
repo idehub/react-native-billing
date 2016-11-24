@@ -124,14 +124,37 @@ If you want to test with static responses, you can use reserved productids defin
 * android.test.refunded
 * android.test.item_unavailable
 
-You will only be able to test the `purchase` function with static responses.
-
 If you want to test with these productids, you will have to use a `null` license key. This is because your actual license key will not validate when using these productids.
 
 In order to do this send in `null` as parameter, along with your Activity-instance, when registering the package:
 `.addPackage(new InAppBillingBridgePackage(null, this))`
 
 [See the Google Play docs for more info on static responses](http://developer.android.com/google/play/billing/billing_testing.html#billing-testing-static).
+
+For instance to purchase and consume the static `android.test.purchased` products, with async/await (you can chain the promise) :
+
+```js
+// To be sure the service is close before opening it
+async pay() {
+  await InAppBilling.close();
+  try {
+    await InAppBilling.open();
+    if (!await InAppBilling.isPurchased(productId)) {
+      const details = await InAppBilling.purchase(productId);
+      console.log('You purchased: ', details);
+    }
+    const transactionStatus = await InAppBilling.getPurchaseTransactionDetails(productId);
+    console.log('Transaction Status', transactionStatus);
+    const productDetails = await InAppBilling.getProductDetails(productId);
+    console.log(productDetails);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await InAppBilling.consumePurchase(productId);
+    await InAppBilling.close();
+  }
+}
+```
 
 ## Testing with your own In-app products
 Testing with static responses is limited, because you are only able to test the `purchase` function. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following:
