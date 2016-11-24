@@ -1,6 +1,6 @@
 {
   "name": "react-native-billing",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "React Native bridge for InApp Billing on Android",
   "main": "index.js",
   "scripts": {
