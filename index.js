@@ -23,6 +23,10 @@ class InAppBilling {
       return InAppBillingBridge.subscribe(productId, developerPayload);
     }
 
+    static updateSubscription(oldProductIds, productId) {
+      return InAppBillingBridge.updateSubscription(oldProductIds, productId)
+    }
+
     static isSubscribed(productId) {
       return InAppBillingBridge.isSubscribed(productId);
     }
