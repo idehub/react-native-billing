@@ -167,18 +167,19 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void updateSubscription(final ReadableArray oldProductIds, final String productId, final Promise promise){
         if (bp != null) {
-            ArrayList<String> oldProductIdList = new ArrayList<>();
-            for (int i = 0; i < oldProductIds.size(); i++) {
-                oldProductIdList.add(oldProductIds.getString(i));
-            }
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
-                boolean updateProcessStarted = bp.updateSubscription(getCurrentActivity(), oldProductIdList, productId);
-                if (!updateProcessStarted) {
-                    rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start updateSubscription process.");
+                ArrayList<String> oldProductIdList = new ArrayList<>();
+                for (int i = 0; i < oldProductIds.size(); i++) {
+                    oldProductIdList.add(oldProductIds.getString(i));
                 }
-          } else {
-              promise.reject("EUNSPECIFIED", "Previous subscribe or purchase operation is not resolved.");
-          }
+
+                boolean updateProcessStarted = bp.updateSubscription(getCurrentActivity(), oldProductIdList, productId);
+
+                if (!updateProcessStarted)
+                    rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start updateSubscription process.");
+            } else {
+                promise.reject("EUNSPECIFIED", "Previous subscribe or purchase operation is not resolved.");
+            }
         } else {
             promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
         }
