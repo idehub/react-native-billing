@@ -261,6 +261,26 @@ InAppBilling.subscribe('your.inapp.productid')
 InAppBilling.isSubscribed('your.inapp.productid').then(...);
 ```
 
+### updateSubscription(oldProductIds, productId)
+##### Parameter(s)
+* **oldProductIds (required)**: Array of String
+* **productId (required)**: String
+
+##### Returns:
+* **transactionDetails:** Object:
+  * **productId:** String
+  * **orderId:** String
+  * **purchaseToken:** String
+  * **purchaseTime:** String
+  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  * **receiptSignature:** String
+  * **receiptData:** String
+  * **developerPayload:** String
+
+```javascript
+InAppBilling.updateSubscription(['subscription.p1m', 'subscription.p3m'], 'subscription.p12m').then(...)
+```
+
 ### isPurchased(productId)
 ##### Parameter(s)
 * **productId (required):** String
