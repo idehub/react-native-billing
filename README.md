@@ -409,3 +409,9 @@ InAppBilling.getSubscriptionTransactionDetails('your.inapp.productid')
   console.log(details)
 });
 ```
+
+### loadOwnedPurchasesFromGoogle()
+Refreshes the internal purchases & subscriptions status cache.
+```javascript
+InAppBilling.loadOwnedPurchasesFromGoogle().then(...);
+```
