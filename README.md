@@ -309,6 +309,7 @@ InAppBilling.listOwnedSubscriptions().then(...);
 ```
 
 ### getProductDetails(productId)
+**Important:** Use this to query managed products. Subscriptions require the use of `getSubscriptionDetails`.
 ##### Parameter(s)
 * **productId (required):** String
 
