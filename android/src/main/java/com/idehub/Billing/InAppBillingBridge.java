@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
+    public static final int PURCHASE_FLOW_REQUEST_CODE = 32459;
+
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
     BillingProcessor bp;
@@ -396,15 +398,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         return BillingProcessor.isIabServiceAvailable(_reactContext);
     }
 
-    @Deprecated
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-        if (bp != null)
-            bp.handleActivityResult(requestCode, resultCode, intent);
-    }
-
-    public void onActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
-        if (bp != null)
-            bp.handleActivityResult(requestCode, resultCode, intent);
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        if (requestCode == InAppBillingBridge.PURCHASE_FLOW_REQUEST_CODE) {
+            resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, true);
+        } else {
+            rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "An error has occured. Code " + requestCode);
+        }
     }
 
     @Override
