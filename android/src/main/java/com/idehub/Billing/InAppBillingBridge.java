@@ -311,6 +311,17 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                             map.putString("currency", detail.currency);
                             map.putDouble("priceValue", detail.priceValue);
                             map.putString("priceText", detail.priceText);
+                            map.putString("subscriptionPeriod", detail.subscriptionPeriod);
+                            if (detail.subscriptionFreeTrialPeriod != null)
+                                map.putString("subscriptionFreeTrialPeriod", detail.subscriptionFreeTrialPeriod);
+                            map.putBoolean("haveTrialPeriod", detail.haveTrialPeriod);
+                            map.putDouble("introductoryPriceValue", detail.introductoryPriceValue);
+                            if (detail.introductoryPriceText != null)
+                                map.putString("introductoryPriceText", detail.introductoryPriceText);
+                            if (detail.introductoryPricePeriod != null)
+                                map.putString("introductoryPricePeriod", detail.introductoryPricePeriod);
+                            map.putBoolean("haveIntroductoryPeriod", detail.haveIntroductoryPeriod);
+                            map.putInt("introductoryPriceCycles", detail.introductoryPriceCycles);
                             arr.pushMap(map);
                         }
                     }
