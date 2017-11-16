@@ -351,6 +351,14 @@ InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.product
   * **currency:** String
   * **priceValue:**  Double
   * **priceText:** String
+  * **subscriptionPeriod** String
+  * **subscriptionFreeTrialPeriod** String - Only if product has a free trial period
+  * **haveTrialPeriod** Boolean
+  * **introductoryPriceValue** Double
+  * **introductoryPriceText** String - Only if product has a introductory price
+  * **introductoryPricePeriod** String - Only if product has a introductory price
+  * **haveIntroductoryPeriod** Boolean
+  * **introductoryPriceCycles** Number
 
 ```javascript
 InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
