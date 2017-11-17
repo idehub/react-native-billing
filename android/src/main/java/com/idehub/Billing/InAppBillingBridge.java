@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class InAppBillingBridge extends ReactContextBaseJavaModule implements ActivityEventListener, BillingProcessor.IBillingHandler {
+    public static final int PURCHASE_FLOW_REQUEST_CODE = 32459;
+
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
     BillingProcessor bp;
@@ -108,8 +110,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId))
-        {
+        if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId)) {
             try {
                 WritableMap map = mapTransactionDetails(details);
                 resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, map);
@@ -123,12 +124,13 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        if (hasPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE))
+        if (hasPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE)) {
             rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Purchase or subscribe failed with error: " + errorCode);
+        }
     }
 
     @ReactMethod
-    public void purchase(final String productId, final String developerPayload, final Promise promise){
+    public void purchase(final String productId, final String developerPayload, final Promise promise) {
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
                 boolean purchaseProcessStarted = bp.purchase(getCurrentActivity(), productId, developerPayload);
@@ -375,8 +377,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
         map.putString("receiptData", details.purchaseInfo.responseData.toString());
 
-        if (details.purchaseInfo.signature != null)
+        if (details.purchaseInfo.signature != null) {
             map.putString("receiptSignature", details.purchaseInfo.signature.toString());
+        }
 
         PurchaseData purchaseData = details.purchaseInfo.purchaseData;
 
@@ -389,8 +392,9 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
           ? "" : purchaseData.purchaseState.toString());
 
 
-        if (purchaseData.developerPayload != null)
+        if (purchaseData.developerPayload != null) {
             map.putString("developerPayload", purchaseData.developerPayload);
+        }
 
         return map;
     }
@@ -409,13 +413,15 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Deprecated
     public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-        if (bp != null)
+        if (bp != null) {
             bp.handleActivityResult(requestCode, resultCode, intent);
+        }
     }
 
     public void onActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
-        if (bp != null)
+        if (bp != null) {
             bp.handleActivityResult(requestCode, resultCode, intent);
+        }
     }
 
     @Override

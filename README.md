@@ -103,6 +103,36 @@ With this, the `link`command will do most of the heavy lifting for native linkin
         }
         ...
     ```
+
+    _**Note**: If you do not subclass ReactActivity for your Main Activity, you **do still** need to override onActivityResult and forward this to the InAppBilling module._
+
+    Example:
+
+    ```java
+      private InAppBillingBridgePackage billingPackage;
+
+      ...
+
+      billingPackage = new InAppBillingBridgePackage();
+      ReactInstanceManager.Builder builder = ReactInstanceManager.builder()
+        .setApplication(getApplication())
+        .setJSMainModuleName(getJSMainModuleName())
+        .setUseDeveloperSupport(getUseDeveloperSupport())
+        .addPackage(billingPackage)
+        .setInitialLifecycleState(mLifecycleState);
+
+      ...
+
+      @Override
+      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+          super.onActivityResult(requestCode, resultCode, data);
+          if (requestCode == InAppBillingBridge.PURCHASE_FLOW_REQUEST_CODE) {
+              billingPackage.onActivityResult(requestCode, resultCode, data);
+          }
+      }
+    ```
+
+
 5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 ```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
