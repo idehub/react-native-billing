@@ -107,6 +107,8 @@ With this, the `link`command will do most of the heavy lifting for native linkin
 ```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
 ```
+This is your License Key from Google Developer console. This will be used to verify purchase signatures. You can pass NULL if you would like to skip this check (You can find your key in Google Play Console -> Your App Name -> Services & APIs)
+
 Alternatively, you can add your license key as a parameter when registering the `InAppBillingBridgePackage`, like so:
 ```java
 .addPackage(new InAppBillingBridgePackage("YOUR_LICENSE_KEY"))
