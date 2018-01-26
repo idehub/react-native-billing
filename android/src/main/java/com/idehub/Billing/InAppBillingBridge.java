@@ -410,12 +410,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (requestCode != PromiseConstants.PURCHASE_FLOW_REQUEST_CODE) {
-            return;
-        }
-
-        int responseCode = data.getIntExtra(PromiseConstants.RESPONSE_CODE, PromiseConstants.BILLING_RESPONSE_RESULT_OK);
-        if (resultCode == Activity.RESULT_OK && responseCode == PromiseConstants.BILLING_RESPONSE_RESULT_OK) {
+        if (bp.handleActivityResult(requestCode, resultCode, data)) {
             resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, true);
         } else {
             rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "An error has occured. Code " + requestCode);
