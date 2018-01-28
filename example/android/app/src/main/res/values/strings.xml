@@ -1,5 +1,4 @@
 <resources>
-
     <string name="app_name">example</string>
     <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
 </resources>
