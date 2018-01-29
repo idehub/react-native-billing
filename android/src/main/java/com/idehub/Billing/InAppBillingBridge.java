@@ -2,6 +2,7 @@ package com.idehub.Billing;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
@@ -27,6 +28,8 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     ReactApplicationContext _reactContext;
     String LICENSE_KEY = null;
     BillingProcessor bp;
+    Boolean mShortCircuit = false;
+    static final String LOG_TAG = "rnbilling";
 
     public InAppBillingBridge(ReactApplicationContext reactContext, String licenseKey) {
         super(reactContext);
@@ -407,15 +410,36 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         return BillingProcessor.isIabServiceAvailable(_reactContext);
     }
 
-    @Deprecated
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+    public void onActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
+        if (mShortCircuit) {
+            shortCircuitActivityResult(activity, requestCode, resultCode, intent);
+            return;
+        }
+
         if (bp != null)
             bp.handleActivityResult(requestCode, resultCode, intent);
     }
 
-    public void onActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
-        if (bp != null)
-            bp.handleActivityResult(requestCode, resultCode, intent);
+    @ReactMethod
+    public void shortCircuitPurchaseFlow(final Boolean enable) {
+        mShortCircuit = enable;
+    }
+
+    int PURCHASE_FLOW_REQUEST_CODE = 32459;
+    int BILLING_RESPONSE_RESULT_OK = 0;
+    String RESPONSE_CODE = "RESPONSE_CODE";
+
+    private void shortCircuitActivityResult(final Activity activity, final int requestCode, final int resultCode, final Intent intent) {
+        if (requestCode != PURCHASE_FLOW_REQUEST_CODE) {
+            return;
+        }
+
+        int responseCode = data.getIntExtra(RESPONSE_CODE, BILLING_RESPONSE_RESULT_OK);
+        if (resultCode == Activity.RESULT_OK && responseCode == BILLING_RESPONSE_RESULT_OK) {
+            resolvePromise(PURCHASE_OR_SUBSCRIBE, true);
+        } else {
+            rejectPromise(PURCHASE_OR_SUBSCRIBE, "An error has occured. Code " + requestCode);
+        }
     }
 
     @Override
@@ -430,6 +454,8 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             Promise promise = mPromiseCache.get(key);
             promise.resolve(value);
             mPromiseCache.remove(key);
+        } else {
+            Log.w(LOG_TAG, String.format("Tried to resolve promise: %d - but does not exist in cache", key));
         }
     }
 
@@ -438,6 +464,8 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             Promise promise = mPromiseCache.get(key);
             promise.reject("EUNSPECIFIED", reason);
             mPromiseCache.remove(key);
+        } else {
+            Log.w(LOG_TAG, String.format("Tried to reject promise: %d - but does not exist in cache", key));
         }
     }
 
@@ -445,6 +473,8 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
         if (!mPromiseCache.containsKey(key)) {
             mPromiseCache.put(key, promise);
             return true;
+        } else {
+            Log.w(LOG_TAG, String.format("Tried to put promise: %d - already exists in cache", key));
         }
         return false;
     }
