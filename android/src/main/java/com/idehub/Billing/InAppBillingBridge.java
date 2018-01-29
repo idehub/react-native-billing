@@ -434,11 +434,11 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             return;
         }
 
-        int responseCode = data.getIntExtra(RESPONSE_CODE, BILLING_RESPONSE_RESULT_OK);
+        int responseCode = intent.getIntExtra(RESPONSE_CODE, BILLING_RESPONSE_RESULT_OK);
         if (resultCode == Activity.RESULT_OK && responseCode == BILLING_RESPONSE_RESULT_OK) {
-            resolvePromise(PURCHASE_OR_SUBSCRIBE, true);
+            resolvePromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, true);
         } else {
-            rejectPromise(PURCHASE_OR_SUBSCRIBE, "An error has occured. Code " + requestCode);
+            rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "An error has occured. Code " + requestCode);
         }
     }
 
