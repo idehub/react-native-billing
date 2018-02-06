@@ -455,7 +455,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             promise.resolve(value);
             mPromiseCache.remove(key);
         } else {
-            Log.w(LOG_TAG, String.format("Tried to resolve promise: %d - but does not exist in cache", key));
+            Log.w(LOG_TAG, String.format("Tried to resolve promise: %s - but does not exist in cache", key));
         }
     }
 
@@ -465,7 +465,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             promise.reject("EUNSPECIFIED", reason);
             mPromiseCache.remove(key);
         } else {
-            Log.w(LOG_TAG, String.format("Tried to reject promise: %d - but does not exist in cache", key));
+            Log.w(LOG_TAG, String.format("Tried to reject promise: %s - but does not exist in cache", key));
         }
     }
 
@@ -474,7 +474,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
             mPromiseCache.put(key, promise);
             return true;
         } else {
-            Log.w(LOG_TAG, String.format("Tried to put promise: %d - already exists in cache", key));
+            Log.w(LOG_TAG, String.format("Tried to put promise: %s - already exists in cache", key));
         }
         return false;
     }
