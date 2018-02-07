@@ -332,6 +332,24 @@ InAppBilling.isPurchased('your.inapp.productid').then(...);
 InAppBilling.isOneTimePurchaseSupported().then(...);
 ```
 
+### isValidTransactionDetails(productId)
+Validates if the transaction for the productId has a valid signature.
+
+##### Parameter(s)
+
+* **productId (required):** String
+
+##### Returns:
+
+* **isValid:** Boolean
+```javascript
+InAppBilling.isValidTransactionDetails("your.inapp.productid").then(
+  isValid => {
+    console.log(isValid);
+  }
+);
+```
+
 ### listOwnedProducts()
 
 ##### Returns:
