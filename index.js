@@ -40,6 +40,10 @@ class InAppBilling {
     return InAppBillingBridge.isPurchased(productId);
   }
 
+  static isOneTimePurchaseSupported() {
+    return InAppBillingBridge.isOneTimePurchaseSupported();
+  }
+
   static listOwnedProducts() {
     return InAppBillingBridge.listOwnedProducts();
   }

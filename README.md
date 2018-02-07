@@ -322,6 +322,16 @@ InAppBilling.updateSubscription(['subscription.p1m', 'subscription.p3m'], 'subsc
 InAppBilling.isPurchased('your.inapp.productid').then(...);
 ```
 
+### isOneTimePurchaseSupported()
+
+##### Returns:
+
+* **oneTimePurchaseSupported:** Boolean
+
+```javascript
+InAppBilling.isOneTimePurchaseSupported().then(...);
+```
+
 ### listOwnedProducts()
 
 ##### Returns:
