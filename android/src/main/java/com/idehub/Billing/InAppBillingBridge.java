@@ -219,6 +219,16 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    public void isOneTimePurchaseSupported(final Promise promise){
+        if (bp != null) {
+            boolean oneTimePurchaseSupported = bp.isOneTimePurchaseSupported();
+            promise.resolve(oneTimePurchaseSupported);
+        } else {
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
     public void listOwnedProducts(final Promise promise){
         if (bp != null) {
             List<String> purchasedProductIds = bp.listOwnedProducts();
