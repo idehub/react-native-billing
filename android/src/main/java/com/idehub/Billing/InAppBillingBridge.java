@@ -178,7 +178,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void updateSubscription(final ReadableArray oldProductIds, final String productId, final Promise promise){
+    public void updateSubscription(final ReadableArray oldProductIds, final String productId, final String developerPayload, final Promise promise){
         if (bp != null) {
             if (putPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, promise)) {
                 ArrayList<String> oldProductIdList = new ArrayList<>();
@@ -186,7 +186,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
                     oldProductIdList.add(oldProductIds.getString(i));
                 }
 
-                boolean updateProcessStarted = bp.updateSubscription(getCurrentActivity(), oldProductIdList, productId);
+                boolean updateProcessStarted = bp.updateSubscription(getCurrentActivity(), oldProductIdList, productId, developerPayload);
 
                 if (!updateProcessStarted)
                     rejectPromise(PromiseConstants.PURCHASE_OR_SUBSCRIBE, "Could not start updateSubscription process.");

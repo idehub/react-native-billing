@@ -291,6 +291,7 @@ InAppBilling.isSubscribed('your.inapp.productid').then(...);
 
 * **oldProductIds (required)**: Array of String
 * **productId (required)**: String
+* **developerPayload:** String
 
 ##### Returns:
 
