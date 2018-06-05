@@ -78,5 +78,5 @@ namespace InAppBilling {
 
   function loadOwnedPurchasesFromGoogle(): Promise<any>;
 }
-
-export = InAppBilling;
+// Cause react native will force covert module.exports to exports.default, so we use export default here.
+export default InAppBilling;
