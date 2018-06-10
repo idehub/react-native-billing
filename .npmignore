@@ -1,1 +1,6 @@
+# example project
 example
+
+# build
+.travis
+.travis.yml
