@@ -182,6 +182,10 @@ Testing with static responses is limited, because you are only able to test the 
 
 **Important**: You can only test on a physical Android device, not from an emulator.
 
+## Handle Canceled Subscriptions
+
+Call `InAppBilling.getSubscriptionTransactionDetails(productId)` and check the `details.autoRenewing` flag. It will be set to `false` once subscription gets cancelled. Also notice, that you will need to call periodically `InAppBilling.loadOwnedPurchasesFromGoogle()` method in order to update purchase/subscription information from the Google-servers.
+
 ## Javascript API
 
 All methods returns a `Promise`.
@@ -224,6 +228,7 @@ InAppBilling.open()
   - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   - **receiptSignature:** String
   - **receiptData:** String
+  - **autoRenewing** Boolean
   - **developerPayload:** String
 
 ```javascript
@@ -263,6 +268,7 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
   - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   - **receiptSignature:** String
   - **receiptData:** String
+  - **autoRenewing** Boolean
   - **developerPayload:** String
 
 ```javascript
@@ -303,6 +309,7 @@ InAppBilling.isSubscribed('your.inapp.productid').then(...);
   - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   - **receiptSignature:** String
   - **receiptData:** String
+  - **autoRenewing** Boolean
   - **developerPayload:** String
 
 ```javascript
@@ -467,6 +474,7 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
   - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   - **receiptSignature:** String
   - **receiptData:** String
+  - **autoRenewing** Boolean
   - **developerPayload:** String
 
 ```javascript
@@ -493,6 +501,7 @@ InAppBilling.getPurchaseTransactionDetails("your.inapp.productid").then(
   - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
   - **receiptSignature:** String
   - **receiptData:** String
+  - **autoRenewing** Boolean
   - **developerPayload:** String
 
 ```javascript

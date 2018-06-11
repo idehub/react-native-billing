@@ -15,6 +15,7 @@ export interface ITransactionDetails {
   purchaseState: PurchaseState;
   receiptSignature: string;
   receiptData: string;
+  autoRenewing: boolean;
   developerPayload: string;
 }
 

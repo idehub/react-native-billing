@@ -414,7 +414,7 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
           ? "" : purchaseData.purchaseTime.toString());
         map.putString("purchaseState", purchaseData.purchaseState == null
           ? "" : purchaseData.purchaseState.toString());
-
+        map.putBoolean("autoRenewing", purchaseData.autoRenewing);
 
         if (purchaseData.developerPayload != null)
             map.putString("developerPayload", purchaseData.developerPayload);
