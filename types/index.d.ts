@@ -23,9 +23,9 @@ export interface IProductDetails {
   productId: string;
   title: string;
   description: string;
-  isSubscription: string;
+  isSubscription: boolean;
   currency: string;
-  priceValue: string;
+  priceValue: number;
   priceText: string;
 }
 
@@ -45,6 +45,8 @@ export default class InAppBilling {
 
   static close(): Promise<void>;
 
+  static loadOwnedPurchasesFromGoogle(): Promise<any>;
+
   static purchase(
     productId: string,
     developerPayload?: string
@@ -55,13 +57,18 @@ export default class InAppBilling {
     developerPayload?: string
   ): Promise<ITransactionDetails>;
 
-  static isSubscribed(productId: string): Promise<boolean>;
+  static subscribe(
+    productId: string,
+    developerPayload?: string
+  ): Promise<ITransactionDetails>;
 
   static updateSubscription(
     oldProductIds: string[],
     productId: string,
     developerPayload?: string
   ): Promise<ITransactionDetails>;
+
+  static isSubscribed(productId: string): Promise<boolean>;
 
   static isPurchased(productId: string): Promise<boolean>;
 
@@ -75,14 +82,6 @@ export default class InAppBilling {
 
   static getProductDetails(productId: string): Promise<IProductDetails>;
 
-  static getProductDetailsArray(productIds: string[]): Promise<IProductDetails[]>;
-
-  static getSubscriptionDetails(productId: string): Promise<ISubscriptionDetails>;
-
-  static getSubscriptionDetailsArray(
-    productIds: string[]
-  ): Promise<ISubscriptionDetails[]>;
-
   static getPurchaseTransactionDetails(
     productId: string
   ): Promise<ITransactionDetails>;
@@ -91,5 +90,15 @@ export default class InAppBilling {
     productId: string
   ): Promise<ITransactionDetails>;
 
-  static loadOwnedPurchasesFromGoogle(): Promise<any>;
+  static getProductDetailsArray(
+    productIds: string[]
+  ): Promise<IProductDetails[]>;
+
+  static getSubscriptionDetails(
+    productId: string
+  ): Promise<ISubscriptionDetails>;
+
+  static getSubscriptionDetailsArray(
+    productIds: string[]
+  ): Promise<ISubscriptionDetails[]>;
 }

@@ -4,3 +4,7 @@ example
 # build
 .travis
 .travis.yml
+
+types/tsconfig.json
+types/tslint.json
+types/type-tests.ts

@@ -8,6 +8,6 @@
     "strictFunctionTypes": false,
     "noEmit": true,
     "baseUrl": ".",
-    "paths": { "react-native-bulling": ["."] }
+    "paths": { "react-native-billing": ["."] }
   }
 }
