@@ -41,55 +41,55 @@ export interface ISubscriptionDetails extends IProductDetails {
 }
 
 export default class InAppBilling {
-  open(): Promise<void>;
+  static open(): Promise<void>;
 
-  close(): Promise<void>;
+  static close(): Promise<void>;
 
-  purchase(
+  static purchase(
     productId: string,
     developerPayload?: string
   ): Promise<ITransactionDetails>;
 
-  consumePurchase(
+  static consumePurchase(
     productId: string,
     developerPayload?: string
   ): Promise<ITransactionDetails>;
 
-  isSubscribed(productId: string): Promise<boolean>;
+  static isSubscribed(productId: string): Promise<boolean>;
 
-  updateSubscription(
+  static updateSubscription(
     oldProductIds: string[],
     productId: string,
     developerPayload?: string
   ): Promise<ITransactionDetails>;
 
-  isPurchased(productId: string): Promise<boolean>;
+  static isPurchased(productId: string): Promise<boolean>;
 
-  isOneTimePurchaseSupported(): Promise<boolean>;
+  static isOneTimePurchaseSupported(): Promise<boolean>;
 
-  isValidTransactionDetails(productId: string): Promise<boolean>;
+  static isValidTransactionDetails(productId: string): Promise<boolean>;
 
-  listOwnedProducts(): Promise<string[]>;
+  static listOwnedProducts(): Promise<string[]>;
 
-  listOwnedSubscriptions(): Promise<string[]>;
+  static listOwnedSubscriptions(): Promise<string[]>;
 
-  getProductDetails(productId: string): Promise<IProductDetails>;
+  static getProductDetails(productId: string): Promise<IProductDetails>;
 
-  getProductDetailsArray(productIds: string[]): Promise<IProductDetails[]>;
+  static getProductDetailsArray(productIds: string[]): Promise<IProductDetails[]>;
 
-  getSubscriptionDetails(productId: string): Promise<ISubscriptionDetails>;
+  static getSubscriptionDetails(productId: string): Promise<ISubscriptionDetails>;
 
-  getSubscriptionDetailsArray(
+  static getSubscriptionDetailsArray(
     productIds: string[]
   ): Promise<ISubscriptionDetails[]>;
 
-  getPurchaseTransactionDetails(
+  static getPurchaseTransactionDetails(
     productId: string
   ): Promise<ITransactionDetails>;
 
-  getSubscriptionTransactionDetails(
+  static getSubscriptionTransactionDetails(
     productId: string
   ): Promise<ITransactionDetails>;
 
-  loadOwnedPurchasesFromGoogle(): Promise<any>;
+  static loadOwnedPurchasesFromGoogle(): Promise<any>;
 }
