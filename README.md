@@ -228,6 +228,14 @@ InAppBilling.open()
   });
 ```
 
+### loadOwnedPurchasesFromGoogle()
+
+Refreshes the internal purchases & subscriptions status cache.
+
+```javascript
+InAppBilling.loadOwnedPurchasesFromGoogle().then(...);
+```
+
 ### purchase(productId)
 
 ##### Parameter(s)
@@ -527,12 +535,4 @@ InAppBilling.getSubscriptionTransactionDetails("your.inapp.productid").then(
     console.log(details);
   }
 );
-```
-
-### loadOwnedPurchasesFromGoogle()
-
-Refreshes the internal purchases & subscriptions status cache.
-
-```javascript
-InAppBilling.loadOwnedPurchasesFromGoogle().then(...);
 ```
