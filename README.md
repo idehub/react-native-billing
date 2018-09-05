@@ -2,18 +2,35 @@
 
 **React Native Billing** is built to provide an easy interface to InApp Billing on **Android**, accomplished by wrapping [anjlab's InApp Billing library](https://github.com/anjlab/android-inapp-billing-v3).
 
-```javascript
-const InAppBilling = require("react-native-billing");
+```js
+import InAppBilling from "react-native-billing";
 
-InAppBilling.open()
-  .then(() => InAppBilling.purchase("android.test.purchased"))
-  .then(details => {
+async purchase() {
+  try {
+    await InAppBilling.open();
+    const details = await InAppBilling.purchase("android.test.purchased");
     console.log("You purchased: ", details);
-    return InAppBilling.close();
-  })
-  .catch(err => {
+  } catch (err) {
     console.log(err);
-  });
+  } finally {
+    await InAppBilling.close();
+  }
+}
+
+async checkSubscription() {
+    try {
+    await InAppBilling.open();
+    // If subscriptions/products are updated server-side you
+    // will have to update cache with loadOwnedPurchasesFromGoogle()
+    await InAppBilling.loadOwnedPurchasesFromGoogle();
+    const isSubscribed = await InAppBilling.isSubscribed("myapp.productId")
+    console.log("Customer subscribed: ", isSubscribed);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await InAppBilling.close();
+  }
+}
 ```
 
 ## Installation and linking
