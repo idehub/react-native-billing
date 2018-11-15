@@ -205,7 +205,7 @@ Call `InAppBilling.getSubscriptionTransactionDetails(productId)` and check the `
 
 ## Javascript API
 
-All methods returns a `Promise`.
+All methods return a `Promise`.
 
 ### open()
 
