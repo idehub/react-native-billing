@@ -28,11 +28,6 @@
     "url": "https://github.com/idehub/react-native-billing/issues"
   },
   "homepage": "https://github.com/idehub/react-native-billing#readme",
-  "rnpm": {
-    "android": {
-      "packageInstance": "new InAppBillingBridgePackage()"
-    }
-  },
   "devDependencies": {
     "dtslint": "^0.3.0"
   }
