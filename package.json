@@ -1,10 +1,12 @@
 {
   "name": "react-native-billing",
-  "version": "2.7.0",
+  "version": "2.10.0",
   "description": "React Native bridge for InApp Billing on Android",
   "main": "index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run dtslint",
+    "dtslint": "dtslint types"
   },
   "repository": {
     "type": "git",
@@ -30,5 +32,8 @@
     "android": {
       "packageInstance": "new InAppBillingBridgePackage()"
     }
+  },
+  "devDependencies": {
+    "dtslint": "^0.3.0"
   }
 }

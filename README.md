@@ -1,32 +1,49 @@
-# InApp Billing for Android [![npm version](https://img.shields.io/npm/v/react-native-billing.svg)](https://www.npmjs.com/package/react-native-billing)
+# InApp Billing for Android [![npm version](https://img.shields.io/npm/v/react-native-billing.svg)](https://www.npmjs.com/package/react-native-billing) [![Build Status](https://travis-ci.org/idehub/react-native-billing.svg?branch=master)](https://travis-ci.org/idehub/react-native-billing)
 
 **React Native Billing** is built to provide an easy interface to InApp Billing on **Android**, accomplished by wrapping [anjlab's InApp Billing library](https://github.com/anjlab/android-inapp-billing-v3).
 
-```javascript
-const InAppBilling = require("react-native-billing");
+```js
+import InAppBilling from "react-native-billing";
 
-InAppBilling.open()
-  .then(() => InAppBilling.purchase("android.test.purchased"))
-  .then(details => {
+async purchase() {
+  try {
+    await InAppBilling.open();
+    const details = await InAppBilling.purchase("android.test.purchased");
     console.log("You purchased: ", details);
-    return InAppBilling.close();
-  })
-  .catch(err => {
+  } catch (err) {
     console.log(err);
-  });
+  } finally {
+    await InAppBilling.close();
+  }
+}
+
+async checkSubscription() {
+    try {
+    await InAppBilling.open();
+    // If subscriptions/products are updated server-side you
+    // will have to update cache with loadOwnedPurchasesFromGoogle()
+    await InAppBilling.loadOwnedPurchasesFromGoogle();
+    const isSubscribed = await InAppBilling.isSubscribed("myapp.productId")
+    console.log("Customer subscribed: ", isSubscribed);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await InAppBilling.close();
+  }
+}
 ```
 
 ## Installation and linking
 
-1. `npm install --save react-native-billing` or `yarn add react-native-billing`
-2. `react-native link react-native-billing`
+1.  `npm install --save react-native-billing` or `yarn add react-native-billing`
+2.  `react-native link react-native-billing`
 
-With this, the `link`command will do most of the heavy lifting for native linking. **But**, you will still need add your Google Play license key to the `strings.xml` (step 5). If you are using a React Native version less than v18.0 you will also have to do step 4.3 (override `onActivityResult`).
+With this, the `link`command will do most of the heavy lifting for native linking. **But**, you will still need add your Google Play license key to the `strings.xml` (step 5). If you are using a React Native version less than v0.18 you will also have to do step 4.3 (override `onActivityResult`).
 
 ## Manual installation Android
 
-1. `npm install --save react-native-billing`
-2. Add the following in `android/setting.gradle`
+1.  `npm install --save react-native-billing`
+2.  Add the following in `android/setting.gradle`
 
 ```gradle
 ...
@@ -34,7 +51,7 @@ include ':react-native-billing', ':app'
 project(':react-native-billing').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-billing/android')
 ```
 
-3. And the following in `android/app/build.gradle`
+3.  And the following in `android/app/build.gradle`
 
 ```gradle
 ...
@@ -44,12 +61,12 @@ dependencies {
 }
 ```
 
-4. Update MainActivity or MainApplication depending on React Native version.
+4.  Update MainActivity or MainApplication depending on React Native version.
 
-* React Native version >= 0.29
+- React Native version >= 0.29
   Edit `MainApplication.java`.
-  1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
-  2. Register package:
+  1.  Add `import com.idehub.Billing.InAppBillingBridgePackage;`
+  2.  Register package:
   ```java
   @Override
   protected List<ReactPackage> getPackages() {
@@ -60,12 +77,12 @@ dependencies {
     );
   }
   ```
-* React Native version < 0.29
+- React Native version < 0.29
   Edit `MainActivity.java`. Step 4.3 is only required if you are using a lower React Native version than 18.0 and/or your `MainActivity` class does not inherit from `ReactActivity`.
 
-  1. Add `import com.idehub.Billing.InAppBillingBridgePackage;`
-  2. Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage())`
-  3. Override `onActivityResult`:
+  1.  Add `import com.idehub.Billing.InAppBillingBridgePackage;`
+  2.  Register package in ReactInstanceManager: `.addPackage(new InAppBillingBridgePackage())`
+  3.  Override `onActivityResult`:
 
   ```java
   @Override
@@ -108,7 +125,7 @@ dependencies {
       ...
   ```
 
-5. Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
+5.  Add your Google Play license key as a line to your `android/app/src/main/res/values/strings.xml` with the name `RNB_GOOGLE_PLAY_LICENSE_KEY`. For example:
 
 ```xml
 <string name="RNB_GOOGLE_PLAY_LICENSE_KEY">YOUR_GOOGLE_PLAY_LICENSE_KEY_HERE</string>
@@ -130,10 +147,10 @@ new InAppBillingBridgePackage("YOUR_LICENSE_KEY")
 
 If you want to test with static responses, you can use reserved productids defined by Google. These are:
 
-* android.test.purchased
-* android.test.canceled
-* android.test.refunded
-* android.test.item_unavailable
+- android.test.purchased
+- android.test.canceled
+- android.test.refunded
+- android.test.item_unavailable
 
 If you want to test with these productids, you will have to use a `null` license key. This is because your actual license key will not validate when using these productids.
 
@@ -171,20 +188,24 @@ async pay() {
 
 Testing with static responses is limited, because you are only able to test the `purchase` function. Therefore, testing with real In-app products is recommended. But before that is possible, you need to do the following:
 
-* I will assume you've already created your Google Play Developer account and an application there.
-* Now you need to create an In-app product under your application at the Google Play Developer Console and activate it (press the button at the top right).
-* Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
-* When you're ready to test, you'll need to properly create a signed APK. You can follow this [guide](https://facebook.github.io/react-native/docs/signed-apk-android.html). (**Important**: You'll have to install the APK as described in the guide. Not in the way you'd normally debug an React Native app on Android).
-* When you have the APK, you need to upload it to Play Developer Console, either the Alpha or the Beta channel will be fine. Remember your app will need to have a proper `applicationId` (normally your package name) and `versionCode` set in `android/app/build.gradle`.
-* After uploading, you will have to publish it to the market. Don't worry, when publishing the APK to the Alpha or Beta channel the APK will not be available for general public. (**Important**: It might take several hours for Google to process the APK).
-* The final part is, you'll need to add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) and signup, and download the app where it redirected.
-* Try to buy something with the device. The purchase will eventually be cancelled, but you can also do this manually through your Google Merchant wallet.
+- I will assume you've already created your Google Play Developer account and an application there.
+- Now you need to create an In-app product under your application at the Google Play Developer Console and activate it (press the button at the top right).
+- Assuming you have installed this module (InApp Billing), you can write the JS code as explained in the Javascript API section. I suggest you to use `getProductDetails` function to see if it's the product is retrieved.
+- When you're ready to test, you'll need to properly create a signed APK. You can follow this [guide](https://facebook.github.io/react-native/docs/signed-apk-android.html). (**Important**: You'll have to install the APK as described in the guide. Not in the way you'd normally debug an React Native app on Android).
+- When you have the APK, you need to upload it to Play Developer Console, either the Alpha or the Beta channel will be fine. Remember your app will need to have a proper `applicationId` (normally your package name) and `versionCode` set in `android/app/build.gradle`.
+- After uploading, you will have to publish it to the market. Don't worry, when publishing the APK to the Alpha or Beta channel the APK will not be available for general public. (**Important**: It might take several hours for Google to process the APK).
+- The final part is, you'll need to add testers for the channel you've published to. The web page will give you a signup URL (opt-in) after you've approved open testing. Visit this URL in the browser of your **testing device** (it must be a physical device, not a emulator) and signup, and download the app where it redirected.
+- Try to buy something with the device. The purchase will eventually be cancelled, but you can also do this manually through your Google Merchant wallet.
 
 **Important**: You can only test on a physical Android device, not from an emulator.
 
+## Handle Canceled Subscriptions
+
+Call `InAppBilling.getSubscriptionTransactionDetails(productId)` and check the `details.autoRenewing` flag. It will be set to `false` once subscription gets cancelled. Also notice, that you will need to call periodically `InAppBilling.loadOwnedPurchasesFromGoogle()` method in order to update purchase/subscription information from the Google-servers.
+
 ## Javascript API
 
-All methods returns a `Promise`.
+All methods return a `Promise`.
 
 ### open()
 
@@ -207,24 +228,33 @@ InAppBilling.open()
   });
 ```
 
+### loadOwnedPurchasesFromGoogle()
+
+Refreshes the internal purchases & subscriptions status cache.
+
+```javascript
+InAppBilling.loadOwnedPurchasesFromGoogle().then(...);
+```
+
 ### purchase(productId)
 
 ##### Parameter(s)
 
-* **productId (required):** String
-* **developerPayload:** String
+- **productId (required):** String
+- **developerPayload:** String
 
 ##### Returns:
 
-* **transactionDetails:** Object:
-  * **productId:** String
-  * **orderId:** String
-  * **purchaseToken:** String
-  * **purchaseTime:** String
-  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
-  * **receiptSignature:** String
-  * **receiptData:** String
-  * **developerPayload:** String
+- **transactionDetails:** Object:
+  - **productId:** String
+  - **orderId:** String
+  - **purchaseToken:** String
+  - **purchaseTime:** String
+  - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  - **receiptSignature:** String
+  - **receiptData:** String
+  - **autoRenewing** Boolean
+  - **developerPayload:** String
 
 ```javascript
 InAppBilling.purchase("android.test.purchased").then(details => {
@@ -236,11 +266,11 @@ InAppBilling.purchase("android.test.purchased").then(details => {
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **consumed:** Boolean (If consumed or not)
+- **consumed:** Boolean (If consumed or not)
 
 ```javascript
 InAppBilling.consumePurchase('your.inapp.productid').then(...);
@@ -250,20 +280,21 @@ InAppBilling.consumePurchase('your.inapp.productid').then(...);
 
 ##### Parameter(s)
 
-* **productId (required):** String
-* **developerPayload:** String
+- **productId (required):** String
+- **developerPayload:** String
 
 ##### Returns:
 
-* **transactionDetails:** Object:
-  * **productId:** String
-  * **orderId:** String
-  * **purchaseToken:** String
-  * **purchaseTime:** String
-  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
-  * **receiptSignature:** String
-  * **receiptData:** String
-  * **developerPayload:** String
+- **transactionDetails:** Object:
+  - **productId:** String
+  - **orderId:** String
+  - **purchaseToken:** String
+  - **purchaseTime:** String
+  - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  - **receiptSignature:** String
+  - **receiptData:** String
+  - **autoRenewing** Boolean
+  - **developerPayload:** String
 
 ```javascript
 InAppBilling.subscribe("your.inapp.productid").then(details => {
@@ -275,11 +306,11 @@ InAppBilling.subscribe("your.inapp.productid").then(details => {
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **subscribed:** Boolean
+- **subscribed:** Boolean
 
 ```javascript
 InAppBilling.isSubscribed('your.inapp.productid').then(...);
@@ -289,20 +320,22 @@ InAppBilling.isSubscribed('your.inapp.productid').then(...);
 
 ##### Parameter(s)
 
-* **oldProductIds (required)**: Array of String
-* **productId (required)**: String
+- **oldProductIds (required)**: Array of String
+- **productId (required)**: String
+- **developerPayload:** String
 
 ##### Returns:
 
-* **transactionDetails:** Object:
-  * **productId:** String
-  * **orderId:** String
-  * **purchaseToken:** String
-  * **purchaseTime:** String
-  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
-  * **receiptSignature:** String
-  * **receiptData:** String
-  * **developerPayload:** String
+- **transactionDetails:** Object:
+  - **productId:** String
+  - **orderId:** String
+  - **purchaseToken:** String
+  - **purchaseTime:** String
+  - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  - **receiptSignature:** String
+  - **receiptData:** String
+  - **autoRenewing** Boolean
+  - **developerPayload:** String
 
 ```javascript
 InAppBilling.updateSubscription(['subscription.p1m', 'subscription.p3m'], 'subscription.p12m').then(...)
@@ -312,11 +345,11 @@ InAppBilling.updateSubscription(['subscription.p1m', 'subscription.p3m'], 'subsc
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **purchased:** Boolean
+- **purchased:** Boolean
 
 ```javascript
 InAppBilling.isPurchased('your.inapp.productid').then(...);
@@ -326,35 +359,35 @@ InAppBilling.isPurchased('your.inapp.productid').then(...);
 
 ##### Returns:
 
-* **oneTimePurchaseSupported:** Boolean
+- **oneTimePurchaseSupported:** Boolean
 
 ```javascript
 InAppBilling.isOneTimePurchaseSupported().then(...);
 ```
 
 ### isValidTransactionDetails(productId)
+
 Validates if the transaction for the productId has a valid signature.
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **isValid:** Boolean
+- **isValid:** Boolean
+
 ```javascript
-InAppBilling.isValidTransactionDetails("your.inapp.productid").then(
-  isValid => {
-    console.log(isValid);
-  }
-);
+InAppBilling.isValidTransactionDetails("your.inapp.productid").then(isValid => {
+  console.log(isValid);
+});
 ```
 
 ### listOwnedProducts()
 
 ##### Returns:
 
-* **ownedProductIds:** Array of String
+- **ownedProductIds:** Array of String
 
 ```javascript
 InAppBilling.listOwnedProducts().then(...);
@@ -364,7 +397,7 @@ InAppBilling.listOwnedProducts().then(...);
 
 ##### Returns:
 
-* **ownedSubscriptionIds:** Array of String
+- **ownedSubscriptionIds:** Array of String
 
 ```javascript
 InAppBilling.listOwnedSubscriptions().then(...);
@@ -376,18 +409,18 @@ InAppBilling.listOwnedSubscriptions().then(...);
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **productDetails:** Object:
-  * **productId:** String
-  * **title:** String
-  * **description:** String
-  * **isSubscription:** Boolean
-  * **currency:** String
-  * **priceValue:** Double
-  * **priceText:** String
+- **productDetails:** Object:
+  - **productId:** String
+  - **title:** String
+  - **description:** String
+  - **isSubscription:** Boolean
+  - **currency:** String
+  - **priceValue:** Double
+  - **priceText:** String
 
 ```javascript
 InAppBilling.getProductDetails('your.inapp.productid').then(...);
@@ -397,11 +430,11 @@ InAppBilling.getProductDetails('your.inapp.productid').then(...);
 
 ##### Parameter(s)
 
-* **productIds (required):** String-array
+- **productIds (required):** String-array
 
 ##### Returns:
 
-* **productDetailsArray:** Array of the productDetails (same as above)
+- **productDetailsArray:** Array of the productDetails (same as above)
 
 ```javascript
 InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.productid2']).then(...);
@@ -411,26 +444,26 @@ InAppBilling.getProductDetailsArray(['your.inapp.productid', 'your.inapp.product
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **productDetails:** Object:
-  * **productId:** String
-  * **title:** String
-  * **description:** String
-  * **isSubscription:** Boolean
-  * **currency:** String
-  * **priceValue:** Double
-  * **priceText:** String
-  * **subscriptionPeriod** String
-  * **subscriptionFreeTrialPeriod** String - Only if product has a free trial period
-  * **haveTrialPeriod** Boolean
-  * **introductoryPriceValue** Double
-  * **introductoryPriceText** String - Only if product has a introductory price
-  * **introductoryPricePeriod** String - Only if product has a introductory price
-  * **haveIntroductoryPeriod** Boolean
-  * **introductoryPriceCycles** Number
+- **productDetails:** Object:
+  - **productId:** String
+  - **title:** String
+  - **description:** String
+  - **isSubscription:** Boolean
+  - **currency:** String
+  - **priceValue:** Double
+  - **priceText:** String
+  - **subscriptionPeriod** String
+  - **subscriptionFreeTrialPeriod** String - Only if product has a free trial period
+  - **haveTrialPeriod** Boolean
+  - **introductoryPriceValue** Double
+  - **introductoryPriceText** String - Only if product has a introductory price
+  - **introductoryPricePeriod** String - Only if product has a introductory price
+  - **haveIntroductoryPeriod** Boolean
+  - **introductoryPriceCycles** Number
 
 ```javascript
 InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
@@ -440,11 +473,11 @@ InAppBilling.getSubscriptionDetails('your.inapp.productid').then(...);
 
 ##### Parameter(s)
 
-* **productIds (required):** String-Array
+- **productIds (required):** String-Array
 
 ##### Returns:
 
-* **productDetailsArray:** Array of the productDetails (same as above)
+- **productDetailsArray:** Array of the productDetails (same as above)
 
 ```javascript
 InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.productid2']).then(...);
@@ -454,19 +487,20 @@ InAppBilling.getSubscriptionDetailsArray(['your.inapp.productid', 'your.inapp.pr
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **transactionDetails:** Object:
-  * **productId:** String
-  * **orderId:** String
-  * **purchaseToken:** String
-  * **purchaseTime:** String
-  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
-  * **receiptSignature:** String
-  * **receiptData:** String
-  * **developerPayload:** String
+- **transactionDetails:** Object:
+  - **productId:** String
+  - **orderId:** String
+  - **purchaseToken:** String
+  - **purchaseTime:** String
+  - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  - **receiptSignature:** String
+  - **receiptData:** String
+  - **autoRenewing** Boolean
+  - **developerPayload:** String
 
 ```javascript
 InAppBilling.getPurchaseTransactionDetails("your.inapp.productid").then(
@@ -480,19 +514,20 @@ InAppBilling.getPurchaseTransactionDetails("your.inapp.productid").then(
 
 ##### Parameter(s)
 
-* **productId (required):** String
+- **productId (required):** String
 
 ##### Returns:
 
-* **transactionDetails:** Object:
-  * **productId:** String
-  * **orderId:** String
-  * **purchaseToken:** String
-  * **purchaseTime:** String
-  * **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
-  * **receiptSignature:** String
-  * **receiptData:** String
-  * **developerPayload:** String
+- **transactionDetails:** Object:
+  - **productId:** String
+  - **orderId:** String
+  - **purchaseToken:** String
+  - **purchaseTime:** String
+  - **purchaseState:** String ("PurchasedSuccessfully", "Canceled", "Refunded", "SubscriptionExpired")
+  - **receiptSignature:** String
+  - **receiptData:** String
+  - **autoRenewing** Boolean
+  - **developerPayload:** String
 
 ```javascript
 InAppBilling.getSubscriptionTransactionDetails("your.inapp.productid").then(
@@ -500,12 +535,4 @@ InAppBilling.getSubscriptionTransactionDetails("your.inapp.productid").then(
     console.log(details);
   }
 );
-```
-
-### loadOwnedPurchasesFromGoogle()
-
-Refreshes the internal purchases & subscriptions status cache.
-
-```javascript
-InAppBilling.loadOwnedPurchasesFromGoogle().then(...);
 ```
