@@ -17,6 +17,6 @@ android {
 }
 
 dependencies {
-    compile "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
-    compile "com.anjlab.android.iab.v3:library:${safeExtGet('anjlabIABVersion', '1.0.44')}"
+    api "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
+    implementation "com.anjlab.android.iab.v3:library:${safeExtGet('anjlabIABVersion', '1.0.44')}"
 }
