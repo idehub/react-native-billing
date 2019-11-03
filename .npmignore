@@ -8,3 +8,5 @@ example
 types/tsconfig.json
 types/tslint.json
 types/type-tests.ts
+
+.github
